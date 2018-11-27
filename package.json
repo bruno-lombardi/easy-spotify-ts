@@ -1,6 +1,6 @@
 {
   "name": "easy-spotify-ts",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A Spotify Web API library for Typescript",
   "main": "src/index.ts",
   "dependencies": {
