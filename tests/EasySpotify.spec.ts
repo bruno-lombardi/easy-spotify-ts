@@ -8,6 +8,7 @@ use(sinonChai);
 import EasySpotify from "../src/EasySpotify";
 import EasySpotifyConfig from "../src/EasySpotifyConfig";
 import { Album } from "../src/models/Album";
+import { Artist } from "../src/models/Artist";
 import { PagingTracks } from "../src/models/Paging";
 
 const params: any = undefined;
@@ -34,6 +35,7 @@ describe("EasySpotify", () => {
     expect(spotify.getAlbum).to.exist;
     expect(spotify.getAlbums).to.exist;
     expect(spotify.getAlbumTracks).to.exist;
+    expect(spotify.getArtist).to.exist;
   });
 
   it("should create an instance of EasySpotify", () => {
@@ -152,7 +154,7 @@ describe("EasySpotify", () => {
     });
 
     describe("getAlbumTracks", () => {
-      const id = "4aawyAB9vmqN3uQ7FjRGTy";
+      let id = "4aawyAB9vmqN3uQ7FjRGTy";
 
       beforeEach(() => {
         httpClientStub.resolves({ data: {
@@ -177,6 +179,65 @@ describe("EasySpotify", () => {
           params: {limit: 3, offset: 0},
           url: "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy/tracks",
         });
+      });
+
+      it("should get tracks for valid album", async () => {
+        const tracks: PagingTracks = await spotify.getAlbumTracks("4aawyAB9vmqN3uQ7FjRGTy", {offset: 0, limit: 3});
+        expect(tracks.items.length).to.eq(3);
+        expect(tracks.items[0].id).to.eq("41MnTivkwTO3UUJ8DrqEJJ");
+        expect(tracks.items[1].name).to.exist;
+      });
+
+      it("should not get tracks for invalid album", async () => {
+        httpClientStub.rejects({response: { status: 400}});
+        id = "invalid";
+        try {
+          await await spotify.getAlbumTracks(id);
+        } catch (err) {
+          expect(err.response.status).to.eq(400);
+        }
+      });
+    });
+
+    describe("getArtist", () => {
+      let id = "4aawyAB9vmqN3uQ7FjRGTy";
+
+      beforeEach(() => {
+        httpClientStub.resolves({ data: {
+          id: "0OdUWJ0sBjDrqHygGUXeCF",
+          name: "Band of Horses",
+          popularity: 100,
+        }});
+      });
+
+      it("should call httpClient method", async () => {
+        const artist = await spotify.getArtist("0OdUWJ0sBjDrqHygGUXeCF");
+        expect(httpClientStub).to.have.been.calledOnce;
+      });
+
+      it("should call httpClient method with correct config", async () => {
+        const artist = await spotify.getArtist("0OdUWJ0sBjDrqHygGUXeCF");
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          url: "https://api.spotify.com/v1/artists/0OdUWJ0sBjDrqHygGUXeCF",
+        });
+      });
+
+      it("should get an artist for valid id", async () => {
+        const artist: Artist = await spotify.getArtist("0OdUWJ0sBjDrqHygGUXeCF");
+        expect(artist.id).to.eq("0OdUWJ0sBjDrqHygGUXeCF");
+        expect(artist.popularity).to.eq(100);
+        expect(artist.name).to.exist;
+      });
+
+      it("should not get artist if invalid id", async () => {
+        httpClientStub.rejects({response: { status: 400}});
+        id = "invalid";
+        try {
+          await await spotify.getArtist(id);
+        } catch (err) {
+          expect(err.response.status).to.eq(400);
+        }
       });
     });
   });

@@ -1,4 +1,4 @@
-import { Artist } from "./Artist";
+import { SimplifiedArtist } from "./Artist";
 import { Copyright } from "./Copyright";
 import { ExternalIDS } from "./ExternalIDS";
 import { ExternalUrls } from "./ExternalUrls";
@@ -8,7 +8,7 @@ import { PagingTracks } from "./Paging";
 
 export class Album {
   public album_type: string;
-  public artists: Artist[];
+  public artists: SimplifiedArtist[];
   public available_markets: string[];
   public copyrights: Copyright[];
   public external_ids: ExternalIDS;

@@ -149,6 +149,28 @@ var EasySpotify = /** @class */ (function () {
             });
         });
     };
+    EasySpotify.prototype.getArtist = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists/" + id)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_4 = _a.sent();
+                        throw err_4;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     EasySpotify.prototype.buildRequest = function (endpoint, params, method) {
         if (method === void 0) { method = "get"; }
         return this.httpClient({
