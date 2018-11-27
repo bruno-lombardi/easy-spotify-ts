@@ -60,6 +60,16 @@ const tracks = await spotify.getAlbumTracks("1A2GTWGtFfWp7KSQTwWOyo", {limit: 10
 // tracks.limit
 // tracks.items[0].artists[1].name
 ```
+### getArtist(id: string): Promise\<Artist\>
+This method returns an complete artist object for the given id.
+> Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
+```ts
+const artist = await spotify.getArtist("0OdUWJ0sBjDrqHygGUXeCF");
+// do something with the albums
+// artist.id
+// artist.genres
+// artist.followers.total
+```
 
 ## <a name="features"></a> Features to implement
 - [ ] Support Search endpoints
