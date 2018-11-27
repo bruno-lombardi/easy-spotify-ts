@@ -1,10 +1,11 @@
-const API_URL = 'https://api.spotify.com/v1';
+const API_URL = "https://api.spotify.com/v1";
 
 export default class EasySpotifyConfig {
-    apiURL?: string = API_URL;
-    token: string;
+    public apiURL: string;
+    public token: string;
 
-    constructor(token: string) {
+    constructor(token: string, apiURL: string = API_URL) {
         this.token = token;
+        this.apiURL = apiURL;
     }
 }
