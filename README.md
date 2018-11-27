@@ -61,7 +61,7 @@ const tracks = await spotify.getAlbumTracks("1A2GTWGtFfWp7KSQTwWOyo", {limit: 10
 // tracks.items[0].artists[1].name
 ```
 
-## [Features to implement](#features)
+## <a name="features"></a> Features to implement
 - [ ] Support Search endpoints
 - [ ] Support Artists endpoints
 - [ ] Support Browse endpoints
