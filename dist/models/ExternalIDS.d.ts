@@ -1,3 +1,3 @@
 export interface ExternalIDS {
-  upc: string;
+    upc: string;
 }

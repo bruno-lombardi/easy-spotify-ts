@@ -1,16 +1,14 @@
 {
     "compilerOptions": {
         "outDir": "./dist/",
-        "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
+        "declaration": true,
         "target": "es5",
-        "allowJs": true,
         "lib": ["es2015", "es6", "dom"]
     },
     "include": [
-        "./src/**/*",
-        "./examples/app.ts"
+        "./src/**/*"
     ],
     "exclude": [
         "node_modules",
