@@ -82,7 +82,7 @@ const artists = await spotify.getArtists(["0oSGxfWSnnOXhD2fKuz2Gy,3dBVyJ7JuOMt4G
 ```
 ### getArtistAlbums(id: string, options?: GetArtistAlbumsOptions): Promise\<PagingAlbums\>
 This method returns an array of simplified album objects for the given artist id.
-> Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/)
+> Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-albums/)
 ```ts
 const artistAlbums = await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy", { 
   include_groups: "appears_on", 
