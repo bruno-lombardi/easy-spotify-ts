@@ -9,9 +9,16 @@ export interface SimplifiedArtist {
     type: string;
     uri: string;
 }
-export interface Artist extends SimplifiedArtist {
+export declare class Artist implements SimplifiedArtist {
+    external_urls: ExternalUrls;
+    href: string;
+    id: string;
+    name: string;
+    type: string;
+    uri: string;
     followers: Followers;
     genres: string[];
     images: Image[];
     popularity: number;
+    constructor(response: any);
 }

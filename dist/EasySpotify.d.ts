@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
 import { Album } from "./models/Album";
 import { Artist } from "./models/Artist";
-import { PagingTracks } from "./models/Paging";
+import { PagingTracks, PagingAlbums } from "./models/Paging";
 export interface GetAlbumTracksOptions {
     limit?: number;
     offset?: number;
@@ -10,6 +10,9 @@ export interface GetAlbumTracksOptions {
 }
 export interface GetAlbumOptions {
     market: string;
+}
+export interface GetArtistAlbumsOptions extends GetAlbumTracksOptions {
+    include_groups?: string;
 }
 export default class EasySpotify {
     config: EasySpotifyConfig;
@@ -23,6 +26,8 @@ export default class EasySpotify {
     getAlbums(ids: string[], options?: GetAlbumOptions): Promise<Album[]>;
     getAlbumTracks(id: string, options?: GetAlbumTracksOptions): Promise<PagingTracks>;
     getArtist(id: string): Promise<Artist>;
+    getArtists(ids: string[]): Promise<Artist[]>;
+    getArtistAlbums(id: string, options?: GetArtistAlbumsOptions): Promise<PagingAlbums>;
     buildRequest(endpoint: string, params?: AxiosRequestConfig["params"], method?: string): AxiosPromise<any>;
     private buildHeaders;
 }

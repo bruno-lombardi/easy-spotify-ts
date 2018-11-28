@@ -48,6 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = require("axios");
 var Album_1 = require("./models/Album");
+var Artist_1 = require("./models/Artist");
 var EasySpotify = /** @class */ (function () {
     function EasySpotify(config) {
         this.config = config;
@@ -166,6 +167,59 @@ var EasySpotify = /** @class */ (function () {
                     case 2:
                         err_4 = _a.sent();
                         throw err_4;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtists = function (ids) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, artists, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists", { ids: "" + ids })];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.artists) {
+                            artists = response.data.artists.map(function (artist) {
+                                return new Artist_1.Artist(artist);
+                            });
+                            return [2 /*return*/, artists];
+                        }
+                        else {
+                            throw new Error("No artists found");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_5 = _a.sent();
+                        throw err_5;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtistAlbums = function (id, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists/" + id + "/albums", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        else {
+                            throw new Error("Could not find any tracks for provided id");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_6 = _a.sent();
+                        throw err_6;
                     case 3: return [2 /*return*/];
                 }
             });
