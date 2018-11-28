@@ -19,7 +19,7 @@ $ npm install node-fetch easy-spotify --save
 `app.ts`
 ```ts
 import { EasySpotify, EasySpotifyConfig } from "easy-spotify-ts";
-import { Album } from "easy-spotify-ts/models";
+import { Album } from "easy-spotify-ts/dist/models";
 
 const spotify = new EasySpotify(new EasySpotifyConfig("your-api-token"));
 
@@ -65,10 +65,35 @@ This method returns an complete artist object for the given id.
 > Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
 ```ts
 const artist = await spotify.getArtist("0OdUWJ0sBjDrqHygGUXeCF");
-// do something with the albums
+// do something with the artist
 // artist.id
 // artist.genres
 // artist.followers.total
+```
+### getArtists(id: string[]): Promise\<Artist[]\>
+This method returns an array of artist objects for the given ids.
+> Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/)
+```ts
+const artists = await spotify.getArtists(["0oSGxfWSnnOXhD2fKuz2Gy,3dBVyJ7JuOMt4GE9607Qin"]);
+// do something with the artists
+// artists[0].id
+// artist[2].genres
+// artist[1].followers.total
+```
+### getArtistAlbums(id: string, options?: GetArtistAlbumsOptions): Promise\<PagingAlbums\>
+This method returns an array of simplified album objects for the given artist id.
+> Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/)
+```ts
+const artistAlbums = await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy", { 
+  include_groups: "appears_on", 
+  limit: 3, 
+  offset: 0, 
+  market: "ES"
+});
+// do something with the albums
+// artistAlbums.items.length
+// artistAlbums.items[0].id
+// artistAlbums.offset
 ```
 
 ## <a name="features"></a> Features to implement

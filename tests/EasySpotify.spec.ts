@@ -9,7 +9,7 @@ import EasySpotify from "../src/EasySpotify";
 import EasySpotifyConfig from "../src/EasySpotifyConfig";
 import { Album } from "../src/models/Album";
 import { Artist } from "../src/models/Artist";
-import { PagingTracks } from "../src/models/Paging";
+import { PagingAlbums, PagingTracks } from "../src/models/Paging";
 
 const params: any = undefined;
 const baseHttpClientConfig = {
@@ -36,6 +36,7 @@ describe("EasySpotify", () => {
     expect(spotify.getAlbums).to.exist;
     expect(spotify.getAlbumTracks).to.exist;
     expect(spotify.getArtist).to.exist;
+    expect(spotify.getArtists).to.exist;
   });
 
   it("should create an instance of EasySpotify", () => {
@@ -238,6 +239,103 @@ describe("EasySpotify", () => {
         } catch (err) {
           expect(err.response.status).to.eq(400);
         }
+      });
+    });
+
+    describe("getArtists", () => {
+      let ids = ["0OdUWJ0sBjDrqHygGUXeCF", "3dBVyJ7JuOMt4GE9607Qin", "0oSGxfWSnnOXhD2fKuz2Gy"];
+
+      beforeEach(() => {
+        httpClientStub.resolves({ data: {
+          artists: [{
+            id: "0OdUWJ0sBjDrqHygGUXeCF",
+            name: "Band of Horses",
+            popularity: 14,
+          }, {
+            id: "3dBVyJ7JuOMt4GE9607Qin",
+            name: "T. Rex",
+            popularity: 62,
+          }, {
+            id: "0oSGxfWSnnOXhD2fKuz2Gy",
+            name: "David Bowie",
+            popularity: 82,
+          }],
+        }});
+      });
+
+      it("should call httpClient method", async () => {
+        const artists: Artist[] = await spotify.getArtists(ids);
+        expect(httpClientStub).to.have.been.calledOnce;
+      });
+
+      it("should call httpClient with correct config", async () => {
+        const artists: Artist[] = await spotify.getArtists(ids);
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { ids: "0OdUWJ0sBjDrqHygGUXeCF,3dBVyJ7JuOMt4GE9607Qin,0oSGxfWSnnOXhD2fKuz2Gy" },
+          url: "https://api.spotify.com/v1/artists",
+        });
+      });
+
+      it("should get artists if valid ids", async () => {
+        const artists: Artist[] = await spotify.getArtists(ids);
+        expect(artists).to.not.be.empty;
+        expect(artists.length).to.eq(3);
+        expect(artists[0].id).to.eq("0OdUWJ0sBjDrqHygGUXeCF");
+        expect(artists[2].name).to.exist;
+      });
+
+      it("should not get artists if invalid ids", async () => {
+        ids = ["invalid", "id"];
+        httpClientStub.rejects({response: { status: 400}});
+        try {
+          const artists: Artist[] = await spotify.getArtists(ids);
+        } catch (err) {
+          expect(err.response.status).to.eq(400);
+        }
+      });
+    });
+
+    describe("getArtistAlbums", () => {
+      const id = "1vCWHaC5f2uS3yhpwWbIA6";
+
+      beforeEach(() => {
+        httpClientStub.resolves({ data: {
+          // tslint:disable-next-line:max-line-length
+          href: "https://api.spotify.com/v1/artists/1vCWHaC5f2uS3yhpwWbIA6/albums?offset=0&limit=3market=ES&include_groups=appears_on",
+          items: [
+            {id: "43977e0YlJeMXG77uCCSMX", name: "Shut Up Lets Dance (Vol. II)", album_group: "appears_on"},
+            {id: "189ngoT3WxR5mZSYkAGOLF", name: "Classic Club Monsters", album_group: "appears_on"},
+          ],
+        }});
+      });
+
+      it("should call httpClient method", async () => {
+        const artistAlbums: PagingAlbums =
+          await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy",
+          {include_groups: "appears_on", limit: 3, offset: 0, market: "ES"});
+        expect(httpClientStub).to.have.been.calledOnce;
+      });
+
+      it("should call httpClient method with correct settings", async () => {
+        const artistAlbums: PagingAlbums =
+          await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy",
+          {include_groups: "appears_on", limit: 3, offset: 0, market: "ES"});
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { include_groups: "appears_on", limit: 3, market: "ES", offset: 0 },
+          url: "https://api.spotify.com/v1/artists/4aawyAB9vmqN3uQ7FjRGTy/albums",
+        });
+      });
+
+      it("should get albums for artist if valid id", async () => {
+        const artistAlbums: PagingAlbums =
+          await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy",
+          {include_groups: "appears_on", limit: 3, offset: 0, market: "ES"});
+        expect(artistAlbums).to.not.be.empty;
+        expect(artistAlbums.items.length).to.eq(2);
+        expect(artistAlbums.items[0].id).to.eq("43977e0YlJeMXG77uCCSMX");
+        expect(artistAlbums.href).to.exist;
       });
     });
   });

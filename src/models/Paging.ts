@@ -1,3 +1,4 @@
+import { SimplifiedAlbum } from "./Album";
 import { SimplifiedTrack } from "./SimplifiedTrack";
 
 export interface Paging {
@@ -12,4 +13,8 @@ export interface Paging {
 
 export interface PagingTracks extends Paging {
   items: SimplifiedTrack[];
+}
+
+export interface PagingAlbums extends Paging {
+  items: SimplifiedAlbum[];
 }

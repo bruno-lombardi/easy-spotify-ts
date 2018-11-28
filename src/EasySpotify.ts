@@ -7,7 +7,7 @@ import axios, {
 import EasySpotifyConfig from "./EasySpotifyConfig";
 import { Album } from "./models/Album";
 import { Artist } from "./models/Artist";
-import { PagingTracks } from "./models/Paging";
+import { PagingTracks, PagingAlbums } from "./models/Paging";
 
 export interface GetAlbumTracksOptions {
   limit?: number;
@@ -17,6 +17,10 @@ export interface GetAlbumTracksOptions {
 
 export interface GetAlbumOptions {
   market: string;
+}
+
+export interface GetArtistAlbumsOptions extends GetAlbumTracksOptions {
+  include_groups?: string;
 }
 
 export default class EasySpotify {
@@ -115,6 +119,35 @@ export default class EasySpotify {
         }
     } catch (err) {
       throw err;
+    }
+  }
+
+  public async getArtists(ids: string[]): Promise<Artist[]> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(`artists`, { ids: `${ids}` });
+      if (response.data.artists) {
+        const artists: Artist[] = response.data.artists.map((artist: any) => {
+          return new Artist(artist);
+        });
+        return artists;
+      } else {
+        throw new Error("No artists found");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getArtistAlbums(id: string, options?: GetArtistAlbumsOptions): Promise<PagingAlbums> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(`artists/${id}/albums`, options);
+      if (response.data) {
+        return response.data;
+      } else {
+        throw new Error("Could not find any tracks for provided id");
+      }
+    } catch (err) {
+      throw  err;
     }
   }
 
