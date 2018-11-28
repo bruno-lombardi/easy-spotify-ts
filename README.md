@@ -8,25 +8,26 @@ There is also a [JS version here](https://github.com/bruno-lombardi/easy-spotify
 ## Installation and Usage
 This library is easier than the JS version to use, because it doesn't have any external dependencies. Also, if you like **type hints**, or **intellisense**, here you get them evem for responses that come from Spotify.
 
-### TypeScript environment
+### NodeJS Environment
 
 Install [easy-spotify-ts](https://www.npmjs.com/package/easy-spotify-ts), and then just import and use the library: 
 
 `terminal`
 ```sh
-$ npm install node-fetch easy-spotify --save
+$ npm install easy-spotify-ts --save
 ```
-`app.ts`
-```ts
-import { EasySpotify, EasySpotifyConfig } from "easy-spotify-ts";
-import { Album } from "easy-spotify-ts/dist/models";
+`app.js`
+```js
+const { EasySpotify, EasySpotifyConfig } = require("easy-spotify-ts");
 
 const spotify = new EasySpotify(new EasySpotifyConfig("your-api-token"));
 
 // Get multiple albums!
 spotify.getAlbums(["382ObEPsp2rxGrnsizN5TX", "1A2GTWGtFfWp7KSQTwWOyo"], {market: "ES"}).then((albums) => {
+  // do something with albums
   console.log(albums);
 }).catch((error) => {
+  // catch an error, like invalid token or invalid request
   console.log(error);
 });
 
