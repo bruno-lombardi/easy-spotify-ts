@@ -10,6 +10,7 @@ import EasySpotifyConfig from "../src/EasySpotifyConfig";
 import { Album } from "../src/models/Album";
 import { Artist } from "../src/models/Artist";
 import { PagingAlbums, PagingTracks } from "../src/models/Paging";
+import { Tracks } from "../src/models/Track";
 
 const params: any = undefined;
 const baseHttpClientConfig = {
@@ -337,6 +338,34 @@ describe("EasySpotify", () => {
         expect(artistAlbums.items[0].id).to.eq("43977e0YlJeMXG77uCCSMX");
         expect(artistAlbums.href).to.exist;
       });
+    });
+
+    describe("getArtistTopTracks", () => {
+      const id = "1vCWHaC5f2uS3yhpwWbIA6";
+
+      beforeEach(() => {
+        httpClientStub.resolves({ data: {
+          tracks: [
+            {id: "44AyOl4qVkzS48vBsbNXaC", name: "Can't Help Falling in Love", uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC"},
+            {id: "44AyOl4qVkzS48vBsbNXaC", name: "Can't Help Falling in Love", uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC"},
+          ],
+        }});
+      });
+
+      it("should call httpClient method", async () => {
+        const artistTopTracks: Tracks =
+          await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", {market: "ES"});
+        expect(httpClientStub).to.have.been.calledOnce;
+      });
+
+      it("should get albums for artist if valid id", async () => {
+        const artistTopTracks: Tracks =
+          await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", {market: "ES"});
+        expect(artistTopTracks).to.not.be.empty;
+        expect(artistTopTracks.tracks.length).to.eq(2);
+        expect(artistTopTracks.tracks[0].id).to.eq("44AyOl4qVkzS48vBsbNXaC");
+      });
+
     });
   });
 });

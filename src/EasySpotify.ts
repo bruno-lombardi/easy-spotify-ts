@@ -8,6 +8,7 @@ import EasySpotifyConfig from "./EasySpotifyConfig";
 import { Album } from "./models/Album";
 import { Artist } from "./models/Artist";
 import { PagingTracks, PagingAlbums } from "./models/Paging";
+import { Tracks } from './models/Track';
 
 export interface GetAlbumTracksOptions {
   limit?: number;
@@ -148,6 +149,19 @@ export default class EasySpotify {
       }
     } catch (err) {
       throw  err;
+    }
+  }
+
+  public async getArtistTopTracks(id: string, options?: GetAlbumOptions): Promise<Tracks> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(`artists/${id}/top-tracks`, options);
+      if(response.data) {
+        return response.data;
+      } else {
+        throw new Error("Could not find any tracks for provided id");
+      }
+    } catch (err) {
+      throw err;
     }
   }
 
