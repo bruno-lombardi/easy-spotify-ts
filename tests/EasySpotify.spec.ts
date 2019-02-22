@@ -10,7 +10,7 @@ import EasySpotifyConfig from "../src/EasySpotifyConfig";
 import { Album } from "../src/models/Album";
 import { Artist } from "../src/models/Artist";
 import { PagingAlbums, PagingTracks } from "../src/models/Paging";
-import { Tracks } from "../src/models/Track";
+import { Track } from "../src/models/Track";
 
 const params: any = undefined;
 const baseHttpClientConfig = {
@@ -346,26 +346,86 @@ describe("EasySpotify", () => {
       beforeEach(() => {
         httpClientStub.resolves({ data: {
           tracks: [
-            {id: "44AyOl4qVkzS48vBsbNXaC", name: "Can't Help Falling in Love", uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC"},
-            {id: "44AyOl4qVkzS48vBsbNXaC", name: "Can't Help Falling in Love", uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC"},
+            {
+              id: "44AyOl4qVkzS48vBsbNXaC",
+              name: "Can't Help Falling in Love",
+              uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
+            },
+            {
+              id: "44AyOl4qVkzS48vBsbNXaC",
+              name: "Can't Help Falling in Love",
+              uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
+            },
           ],
         }});
       });
 
-      it("should call httpClient method", async () => {
-        const artistTopTracks: Tracks =
+      it("should call httpClient method with correct settings", async () => {
+        const artistTopTracks: Track[] =
           await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", {market: "ES"});
-        expect(httpClientStub).to.have.been.calledOnce;
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { market: "ES"},
+          url: "https://api.spotify.com/v1/artists/4aawyAB9vmqN3uQ7FjRGTy/top-tracks",
+        });
       });
 
       it("should get albums for artist if valid id", async () => {
-        const artistTopTracks: Tracks =
+        const artistTopTracks: Track[] =
           await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", {market: "ES"});
         expect(artistTopTracks).to.not.be.empty;
-        expect(artistTopTracks.tracks.length).to.eq(2);
-        expect(artistTopTracks.tracks[0].id).to.eq("44AyOl4qVkzS48vBsbNXaC");
+        expect(artistTopTracks.length).to.eq(2);
+        expect(artistTopTracks[0].id).to.eq("44AyOl4qVkzS48vBsbNXaC");
       });
 
+    });
+
+    describe("getArtistRelatedArtists", () => {
+      beforeEach(() => {
+        httpClientStub.resolves({ data: {
+          artists: [
+            {
+              external_urls : {
+                spotify : "https://open.spotify.com/artist/5ZKMPRDHc7qElVJFh3uRqB",
+              },
+              followers : {
+                href : null,
+                total : 18108,
+              },
+              genres : [ "rockabilly" ],
+              href : "https://api.spotify.com/v1/artists/5ZKMPRDHc7qElVJFh3uRqB",
+              id : "5ZKMPRDHc7qElVJFh3uRqB",
+            },
+            {
+              external_urls : {
+                spotify : "https://open.spotify.com/artist/5ZKMPRDHc7qElVJFh3uRqB",
+              },
+              followers : {
+                href : null,
+                total : 18108,
+              },
+              genres : [ "rockabilly" ],
+              href : "https://api.spotify.com/v1/artists/5ZKMPRDHc7qElVJFh3uRqB",
+              id : "5ZKMPRDHc7qElVJFh3uRqB",
+            },
+          ],
+        }});
+      });
+
+      it("should call httpClient method with correct settings", async () => {
+        const artists: Artist[] = await spotify.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG9PnE");
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          url: "https://api.spotify.com/v1/artists/43ZHCT0cAZBISjO8DG9PnE/related-artists",
+        });
+      });
+
+      it("should get related artists if valid id", async () => {
+        const artists: Artist[] = await spotify.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG9PnE");
+        expect(artists).to.not.be.empty;
+        expect(artists.length).to.eq(2);
+        expect(artists[0].id).to.eq("5ZKMPRDHc7qElVJFh3uRqB");
+      });
     });
   });
 });

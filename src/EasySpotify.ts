@@ -7,8 +7,8 @@ import axios, {
 import EasySpotifyConfig from "./EasySpotifyConfig";
 import { Album } from "./models/Album";
 import { Artist } from "./models/Artist";
-import { PagingTracks, PagingAlbums } from "./models/Paging";
-import { Tracks } from './models/Track';
+import {  PagingAlbums, PagingTracks } from "./models/Paging";
+import { Track } from "./models/Track";
 
 export interface GetAlbumTracksOptions {
   limit?: number;
@@ -152,13 +152,30 @@ export default class EasySpotify {
     }
   }
 
-  public async getArtistTopTracks(id: string, options?: GetAlbumOptions): Promise<Tracks> {
+  public async getArtistTopTracks(id: string, options?: GetAlbumOptions): Promise<Track[]> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(`artists/${id}/top-tracks`, options);
-      if(response.data) {
-        return response.data;
+      if (response.data.tracks) {
+        const tracks: Track[] = response.data.tracks.map((track: any) => {
+          return new Track(track);
+        });
+        return tracks;
       } else {
         throw new Error("Could not find any tracks for provided id");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getArtistRelatedArtists(id: string): Promise<Artist[]> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(`artists/${id}/related-artists`);
+      if (response.data.artists) {
+        const artists: Artist[] = response.data.artists.map((artist: any) => {
+          return new Artist(artist);
+        });
+        return artists;
       }
     } catch (err) {
       throw err;

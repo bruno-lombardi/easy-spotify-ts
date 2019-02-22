@@ -48,6 +48,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var axios_1 = require("axios");
 var Album_1 = require("./models/Album");
+var Artist_1 = require("./models/Artist");
+var Track_1 = require("./models/Track");
 var EasySpotify = /** @class */ (function () {
     function EasySpotify(config) {
         this.config = config;
@@ -144,6 +146,134 @@ var EasySpotify = /** @class */ (function () {
                     case 2:
                         err_3 = _a.sent();
                         throw err_3;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtist = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists/" + id)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_4 = _a.sent();
+                        throw err_4;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtists = function (ids) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, artists, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists", { ids: "" + ids })];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.artists) {
+                            artists = response.data.artists.map(function (artist) {
+                                return new Artist_1.Artist(artist);
+                            });
+                            return [2 /*return*/, artists];
+                        }
+                        else {
+                            throw new Error("No artists found");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_5 = _a.sent();
+                        throw err_5;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtistAlbums = function (id, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists/" + id + "/albums", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        else {
+                            throw new Error("Could not find any tracks for provided id");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_6 = _a.sent();
+                        throw err_6;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtistTopTracks = function (id, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, tracks, err_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists/" + id + "/top-tracks", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.tracks) {
+                            tracks = response.data.tracks.map(function (track) {
+                                return new Track_1.Track(track);
+                            });
+                            return [2 /*return*/, tracks];
+                        }
+                        else {
+                            throw new Error("Could not find any tracks for provided id");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_7 = _a.sent();
+                        throw err_7;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getArtistRelatedArtists = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, artists, err_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("artists/" + id + "/related-artists")];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.artists) {
+                            artists = response.data.artists.map(function (artist) {
+                                return new Artist_1.Artist(artist);
+                            });
+                            return [2 /*return*/, artists];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_8 = _a.sent();
+                        throw err_8;
                     case 3: return [2 /*return*/];
                 }
             });

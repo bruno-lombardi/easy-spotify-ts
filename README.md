@@ -97,9 +97,31 @@ const artistAlbums = await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy", {
 // artistAlbums.offset
 ```
 
+### getArtistTopTracks(id: string, options?: GetAlbumOptions): Promise\<Track[]\>
+This method returns an array of up to 10 top Track objects for the given artist id.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/)
+```ts
+const topTracks = await spotfiy.getArtistTopTracks("43ZHCT0cAZBISjO8DG9PnE", {market: "SE"});
+// do something with tracks
+// topTracks[0].name
+// topTracks[2].disc_number
+// topTracks[9].preview_url
+```
+
+### getArtistRelatedArtists(id: string): Promise<Artist[]>
+This method returns an array of related artists for the given artist id.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-related-artists/)
+```ts
+const relatedArtists = await spotfiy.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG9PnE");
+// do something with artists
+// relatedArtists[0].followers.total
+// relatedArtists[1].images[0].url
+// relatedArtists[3].genres[0]
+```
+
 ## <a name="features"></a> Features to implement
 - [ ] Support Search endpoints
-- [ ] Support Artists endpoints
+- [x] Support Artists endpoints
 - [ ] Support Browse endpoints
 - [ ] Support Follow endpoints
 - [ ] Support Library endpoints
