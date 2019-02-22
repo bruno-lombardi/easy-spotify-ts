@@ -1,9 +1,10 @@
 # EasySpotifyTS - A Spotify Web Api TS Wrapper
-This is a TypeScript library that wraps [Spotify Web API](https://developer.spotify.com/documentation/web-api/) to make your life easier. It's still not published and in **development**. See [features list](#features) to check what else I plan to add to this library.
+<p align="center">
+  <img><a href="https://nodei.co/npm/easy-spotify-ts/"><img src="https://nodei.co/npm/easy-spotify-ts.png"></a>
+</p>
+This is a Javascript library written in Typescript that wraps [Spotify Web API](https://developer.spotify.com/documentation/web-api/) to make your spotify responses and requests benefit from autocompletion. It's still not published and in **development**. See [features list](#features) to check what else I plan to add to this library.
 
 ![Demo](demo.gif)
-
-There is also a [JS version here](https://github.com/bruno-lombardi/easy-spotify/).
 
 ## Installation and Usage
 This library is easier than the JS version to use, because it doesn't have any external dependencies. Also, if you like **type hints**, or **intellisense**, here you get them evem for responses that come from Spotify.
@@ -120,7 +121,7 @@ const relatedArtists = await spotfiy.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG
 ```
 
 ## <a name="features"></a> Features to implement
-- [ ] Support Search endpoints
+- [ ] Support Search endpoint
 - [x] Support Artists endpoints
 - [ ] Support Browse endpoints
 - [ ] Support Follow endpoints
