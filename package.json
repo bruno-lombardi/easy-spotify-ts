@@ -16,7 +16,9 @@
     "@types/sinon": "^5.0.7",
     "@types/sinon-chai": "^3.2.1",
     "chai": "^4.2.0",
+    "codecov": "^3.2.0",
     "mocha": "^5.2.0",
+    "nyc": "^13.3.0",
     "rimraf": "^2.6.2",
     "sinon": "^7.1.1",
     "sinon-chai": "^3.3.0",
@@ -31,10 +33,26 @@
     "build:tsc": "npm run clear && tsc",
     "build:example": "rimraf ./example/dist && tsc ./examples/app.ts --outDir ./examples/dist --lib es2015,es6,dom",
     "dev": "tsc -w",
-    "test": "mocha -r ts-node/register tests/**/*.spec.js",
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
     "test:tdd": "mocha -r ts-node/register tests/**/*.spec.ts --watch-extensions ts --watch",
     "lint": "tslint -p .",
-    "prepush": "npm run lint"
+    "prepush": "npm run lint",
+    "test:coverage": "nyc npm test"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "exclude": [
+      "tests/**"
+    ]
   },
   "repository": {
     "type": "git",

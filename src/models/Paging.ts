@@ -1,4 +1,6 @@
 import { SimplifiedAlbum } from "./Album";
+import { SimplifiedArtist } from "./Artist";
+import { SimplifiedPlaylist } from "./Playlist";
 import { SimplifiedTrack } from "./SimplifiedTrack";
 
 export interface Paging {
@@ -17,4 +19,19 @@ export interface PagingTracks extends Paging {
 
 export interface PagingAlbums extends Paging {
   items: SimplifiedAlbum[];
+}
+
+export interface PagingArtists extends Paging {
+  items: SimplifiedArtist[];
+}
+
+export interface PagingPlaylists extends Paging {
+  items: SimplifiedPlaylist[];
+}
+
+export interface PagingSearch {
+  tracks: PagingTracks;
+  albums: PagingAlbums;
+  artists: PagingArtists;
+  playlists: PagingPlaylists;
 }

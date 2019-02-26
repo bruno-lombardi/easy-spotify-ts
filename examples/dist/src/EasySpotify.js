@@ -279,6 +279,120 @@ var EasySpotify = /** @class */ (function () {
             });
         });
     };
+    EasySpotify.prototype.searchAlbums = function (query, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var params, response, err_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        params = __assign({}, options, { q: query, type: "album" });
+                        return [4 /*yield*/, this.buildRequest("search", params)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.albums) {
+                            return [2 /*return*/, response.data.albums];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_9 = _a.sent();
+                        throw err_9;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.searchArtists = function (query, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var params, response, err_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        params = __assign({}, options, { q: query, type: "artist" });
+                        return [4 /*yield*/, this.buildRequest("search", params)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.artists) {
+                            return [2 /*return*/, response.data.artists];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_10 = _a.sent();
+                        throw err_10;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.searchPlaylists = function (query, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var params, response, err_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        params = __assign({}, options, { q: query, type: "playlist" });
+                        return [4 /*yield*/, this.buildRequest("search", params)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.playlists) {
+                            return [2 /*return*/, response.data.playlists];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_11 = _a.sent();
+                        throw err_11;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.searchTracks = function (query, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var params, response, err_12;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        params = __assign({}, options, { q: query, type: "track" });
+                        return [4 /*yield*/, this.buildRequest("search", params)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data.tracks) {
+                            return [2 /*return*/, response.data.tracks];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_12 = _a.sent();
+                        throw err_12;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.search = function (query, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_13;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("search", __assign({}, options, { q: query }))];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_13 = _a.sent();
+                        throw err_13;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     EasySpotify.prototype.buildRequest = function (endpoint, params, method) {
         if (method === void 0) { method = "get"; }
         return this.httpClient({

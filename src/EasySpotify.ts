@@ -5,22 +5,27 @@ import axios, {
   AxiosResponse,
 } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
-import { Album } from "./models/Album";
+import { Album, SimplifiedAlbum } from "./models/Album";
 import { Artist } from "./models/Artist";
-import {  PagingAlbums, PagingTracks } from "./models/Paging";
+import {  PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch } from "./models/Paging";
 import { Track } from "./models/Track";
 
-export interface GetAlbumTracksOptions {
+export interface OptionalRequestParams {
   limit?: number;
   offset?: number;
   market?: string;
+}
+
+export interface SearchRequestParams extends OptionalRequestParams {
+  type: string;
+  include_external?: string;
 }
 
 export interface GetAlbumOptions {
   market: string;
 }
 
-export interface GetArtistAlbumsOptions extends GetAlbumTracksOptions {
+export interface GetArtistAlbumsOptions extends OptionalRequestParams {
   include_groups?: string;
 }
 
@@ -95,7 +100,7 @@ export default class EasySpotify {
 
   public async getAlbumTracks(
     id: string,
-    options?: GetAlbumTracksOptions,
+    options?: OptionalRequestParams,
   ): Promise<PagingTracks> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(
@@ -176,6 +181,81 @@ export default class EasySpotify {
           return new Artist(artist);
         });
         return artists;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async searchAlbums(query: string, options?: OptionalRequestParams): Promise<PagingAlbums> {
+    try {
+      const params = {
+        ...options,
+        q: query,
+        type: "album",
+      };
+      const response: AxiosResponse<any> = await this.buildRequest("search", params);
+      if (response.data.albums) {
+        return response.data.albums;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async searchArtists(query: string, options?: OptionalRequestParams): Promise<PagingArtists> {
+    try {
+      const params = {
+        ...options,
+        q: query,
+        type: "artist",
+      };
+      const response: AxiosResponse<any> = await this.buildRequest("search", params);
+      if (response.data.artists) {
+        return response.data.artists;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async searchPlaylists(query: string, options?: OptionalRequestParams): Promise<PagingPlaylists> {
+    try {
+      const params = {
+        ...options,
+        q: query,
+        type: "playlist",
+      };
+      const response: AxiosResponse<any> = await this.buildRequest("search", params);
+      if (response.data.playlists) {
+        return response.data.playlists;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async searchTracks(query: string, options?: OptionalRequestParams): Promise<PagingTracks> {
+    try {
+      const params = {
+        ...options,
+        q: query,
+        type: "track",
+      };
+      const response: AxiosResponse<any> = await this.buildRequest("search", params);
+      if (response.data.tracks) {
+        return response.data.tracks;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async search(query: string, options: SearchRequestParams): Promise<PagingSearch> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest("search", {...options, q: query});
+      if (response.data) {
+        return response.data;
       }
     } catch (err) {
       throw err;

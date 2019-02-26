@@ -16,6 +16,9 @@ export interface SimplifiedAlbum {
   id: string;
   images: Image[];
   name: string;
+  release_date: string;
+  release_date_precision: string;
+  restrictions: any;
   type: string;
   uri: string;
 }
@@ -32,9 +35,10 @@ export class Album implements SimplifiedAlbum {
   public id: string;
   public images: Image[];
   public name: string;
-  public popularity: number;
   public release_date: string;
   public release_date_precision: string;
+  public restrictions: any;
+  public popularity: number;
   public tracks: PagingTracks;
   public type: string;
   public uri: string;

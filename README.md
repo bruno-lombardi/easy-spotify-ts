@@ -121,8 +121,68 @@ const relatedArtists = await spotfiy.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG
 // relatedArtists[3].genres[0]
 ```
 
+### searchAlbums(query: string, options?: OptionalRequestParams): Promise\<PagingAlbums\>
+This method returns an paging object of albums for the given query.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/search/search/)
+```ts
+const albums = await spotify.searchAlbums("Rock", {limit: 2});
+
+// do something with albums
+// albums.items[0].id
+// albums.items[1].artists
+```
+
+### searchArtists(query: string, options?: OptionalRequestParams): Promise\<PagingArtists\>
+This method returns an paging object of artists for the given query.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/search/search/)
+```ts
+const artists = await spotify.searchArtists("Elvis", {limit: 2});
+
+// do something with artists
+// artists.items[0].name
+// artists.items[1].uri
+```
+
+### searchPlaylists(query: string, options?: OptionalRequestParams): Promise\<PagingPlaylists\>
+This method returns an paging object of playlists for the given query.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/search/search/)
+```ts
+const playlists = await spotify.searchPlaylists("abba", {limit: 2, market: "US"});
+
+// do something with playlists
+// playlists.items[0].tracks
+// playlists.items[1].owner
+```
+
+### searchTracks(query: string, options?: OptionalRequestParams): Promise\<PagingTracks\>
+This method returns an paging object of tracks for the given query.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/search/search/)
+```ts
+const tracks = await spotify.searchTracks("love", {limit: 2});
+
+// do something with playlists
+// tracks.items[0].artists
+// tracks.items[1].preview_url
+```
+
+### search(query: string, options: SearchRequestParams): Promise\<PagingSearch\>
+This method returns an object that may contain albums, artists, playlists or tracks paging object. Under options, 
+you should define the type as comma-separated list of wich ones you want (in singular).
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/search/search/)
+```ts
+const result = await spotify.search("love", {type: "artist,playlist", limit: 2});
+
+// do something with result
+// result.artists.items[0].id
+// result.playlists.total
+// result.playlists.items[0].name
+// result.tracks -> undefined
+// result.albums -> undefined
+```
+
+
 ## <a name="features"></a> Features to implement
-- [ ] Support Search endpoint
+- [x] Support Search endpoint
 - [x] Support Artists endpoints
 - [ ] Support Browse endpoints
 - [ ] Support Follow endpoints
