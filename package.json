@@ -32,12 +32,14 @@
     "example": "node dist/examples/app.js",
     "build:tsc": "npm run clear && tsc",
     "build:example": "rimraf ./example/dist && tsc ./examples/app.ts --outDir ./examples/dist --lib es2015,es6,dom",
+    "build:all": "npm run build:tsc && npm run build:example",
     "dev": "tsc -w",
     "test": "mocha -r ts-node/register tests/**/*.spec.ts",
     "test:tdd": "mocha -r ts-node/register tests/**/*.spec.ts --watch-extensions ts --watch",
     "lint": "tslint -p .",
     "prepush": "npm run lint",
-    "test:coverage": "nyc npm test"
+    "test:coverage": "nyc npm test",
+    "test:report": "nyc report --reporter=text-lcov > coverage.lcov"
   },
   "nyc": {
     "extension": [
