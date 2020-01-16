@@ -50,6 +50,7 @@ var axios_1 = require("axios");
 var Album_1 = require("./models/Album");
 var Artist_1 = require("./models/Artist");
 var Track_1 = require("./models/Track");
+var Category_1 = require("./models/Category");
 var EasySpotify = /** @class */ (function () {
     function EasySpotify(config) {
         this.config = config;
@@ -388,6 +389,174 @@ var EasySpotify = /** @class */ (function () {
                     case 2:
                         err_13 = _a.sent();
                         throw err_13;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getBrowseCategory = function (id, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_14;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("browse/categories/" + id, options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, new Category_1.Category(response.data)];
+                        }
+                        else {
+                            throw new Error("Could not find any category with that id");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_14 = _a.sent();
+                        throw err_14;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getBrowseCategoryPlaylists = function (id, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_15;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("browse/categories/" + id + "/playlists", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data.playlists];
+                        }
+                        else {
+                            throw new Error("Could not find any playlist from that category id");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_15 = _a.sent();
+                        throw err_15;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getBrowseListOfCategories = function (options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_16;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("browse/categories", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data.categories];
+                        }
+                        else {
+                            throw new Error("Could not get any categories");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_16 = _a.sent();
+                        throw err_16;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getBrowseFeaturedPlaylists = function (options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_17;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        if (options.timestamp) {
+                            Object.assign(options, { timestamp: options.timestamp.toISOString() });
+                        }
+                        return [4 /*yield*/, this.buildRequest("browse/featured-playlists", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        else {
+                            throw new Error("Could not get any featured playlists");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_17 = _a.sent();
+                        throw err_17;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getBrowseNewReleases = function (options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_18;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("browse/new-releases", options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        else {
+                            throw new Error("Could not get any albums");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_18 = _a.sent();
+                        throw err_18;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getBrowseRecommendations = function (query) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_19;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        if (query.seed_artists && query.seed_artists.length) {
+                            Object.assign(query, {
+                                seed_artists: query.seed_artists.join(",")
+                            });
+                        }
+                        if (query.seed_genres && query.seed_genres.length) {
+                            Object.assign(query, {
+                                seed_genres: query.seed_genres.join(",")
+                            });
+                        }
+                        if (query.seed_tracks && query.seed_tracks.length) {
+                            Object.assign(query, {
+                                seed_tracks: query.seed_tracks.join(",")
+                            });
+                        }
+                        return [4 /*yield*/, this.buildRequest("recommendations", query)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        else {
+                            throw new Error("Could not get any recommendations");
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_19 = _a.sent();
+                        throw err_19;
                     case 3: return [2 /*return*/];
                 }
             });

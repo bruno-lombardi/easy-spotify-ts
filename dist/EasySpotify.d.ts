@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
 import { Album, FeaturedAlbums } from "./models/Album";
 import { Artist } from "./models/Artist";
-import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch } from "./models/Paging";
+import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch, PagingCategories } from "./models/Paging";
 import { Track } from "./models/Track";
 import { Category } from './models/Category';
 import { FeaturedPlaylists } from "./models/Playlist";
@@ -57,7 +57,7 @@ export default class EasySpotify {
         country?: string;
         offset?: number;
         limit?: number;
-    }): Promise<any>;
+    }): Promise<PagingCategories>;
     getBrowseFeaturedPlaylists(options: {
         locale?: string;
         country?: string;
