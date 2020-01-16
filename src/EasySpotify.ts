@@ -5,10 +5,13 @@ import axios, {
   AxiosResponse,
 } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
-import { Album, SimplifiedAlbum } from "./models/Album";
+import { Album, SimplifiedAlbum, FeaturedAlbums } from "./models/Album";
 import { Artist } from "./models/Artist";
-import {  PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch } from "./models/Paging";
+import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch, PagingCategories } from "./models/Paging";
 import { Track } from "./models/Track";
+import { Category } from './models/Category';
+import { FeaturedPlaylists } from "./models/Playlist";
+import { RecommendationsQuery, Recommendations } from "./models/Recomendations";
 
 export interface OptionalRequestParams {
   limit?: number;
@@ -119,10 +122,10 @@ export default class EasySpotify {
 
   public async getArtist(id: string): Promise<Artist> {
     try {
-        const response: AxiosResponse<any> = await this.buildRequest(`artists/${id}`);
-        if (response.data) {
-            return response.data;
-        }
+      const response: AxiosResponse<any> = await this.buildRequest(`artists/${id}`);
+      if (response.data) {
+        return response.data;
+      }
     } catch (err) {
       throw err;
     }
@@ -153,7 +156,7 @@ export default class EasySpotify {
         throw new Error("Could not find any tracks for provided id");
       }
     } catch (err) {
-      throw  err;
+      throw err;
     }
   }
 
@@ -253,13 +256,128 @@ export default class EasySpotify {
 
   public async search(query: string, options: SearchRequestParams): Promise<PagingSearch> {
     try {
-      const response: AxiosResponse<any> = await this.buildRequest("search", {...options, q: query});
+      const response: AxiosResponse<any> = await this.buildRequest("search", { ...options, q: query });
       if (response.data) {
         return response.data;
       }
     } catch (err) {
       throw err;
     }
+  }
+
+  public async getBrowseCategory(id: string, options?: { country?: string, locale?: string }) {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(
+        `browse/categories/${id}`,
+        options,
+      );
+      if (response.data) {
+        return new Category(response.data);
+      } else {
+        throw new Error("Could not find any category with that id");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getBrowseCategoryPlaylists(id: string, options: { country?: string, limit?: number, offset?: number }): Promise<PagingPlaylists> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(
+        `browse/categories/${id}/playlists`,
+        options,
+      );
+      if (response.data) {
+        return response.data.playlists;
+      } else {
+        throw new Error("Could not find any playlist from that category id");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getBrowseListOfCategories(options: {locale?: string, country?: string, offset?: number, limit?: number}): Promise<PagingCategories> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(
+        `browse/categories`,
+        options,
+      );
+      if (response.data) {
+        return response.data.categories;
+      } else {
+        throw new Error("Could not get any categories");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getBrowseFeaturedPlaylists(options: {locale?: string, country?: string, timestamp?: Date, limit?: number, offset?: number}): Promise<FeaturedPlaylists> {
+    try {
+      if (options.timestamp) {
+        Object.assign(options, {timestamp: options.timestamp.toISOString()});
+      }
+      const response: AxiosResponse<any> = await this.buildRequest(
+        `browse/featured-playlists`,
+        options,
+      );
+      if (response.data) {
+        return response.data;
+      } else {
+        throw new Error("Could not get any featured playlists");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getBrowseNewReleases(options: {country?: string, limit?: number, offset?: number}): Promise<FeaturedAlbums> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(
+        `browse/new-releases`,
+        options,
+      );
+      if (response.data) {
+        return response.data;
+      } else {
+        throw new Error("Could not get any albums");
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getBrowseRecommendations(query: RecommendationsQuery): Promise<Recommendations> {
+    try {
+      if (query.seed_artists && query.seed_artists.length) {
+        Object.assign(query, {
+          seed_artists: query.seed_artists.join(","),
+        });
+      }
+      if (query.seed_genres && query.seed_genres.length) {
+        Object.assign(query, {
+          seed_genres: query.seed_genres.join(","),
+        });
+      }
+      if (query.seed_tracks && query.seed_tracks.length) {
+        Object.assign(query, {
+          seed_tracks: query.seed_tracks.join(","),
+        });
+      }
+      const response: AxiosResponse<any> = await this.buildRequest(
+        `recommendations`,
+        query,
+      );
+      if (response.data) {
+        return response.data;
+      } else {
+        throw new Error("Could not get any recommendations");
+      }
+    } catch (err) {
+      throw err;
+    }
+
   }
 
   public buildRequest(

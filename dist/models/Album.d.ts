@@ -3,7 +3,11 @@ import { Copyright } from "./Copyright";
 import { ExternalIDS } from "./ExternalIDS";
 import { ExternalUrls } from "./ExternalUrls";
 import { Image } from "./Image";
-import { PagingTracks } from "./Paging";
+import { PagingTracks, PagingAlbums } from "./Paging";
+export interface FeaturedAlbums {
+    message: string;
+    albums: PagingAlbums;
+}
 export interface SimplifiedAlbum {
     album_group?: string;
     album_type: string;

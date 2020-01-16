@@ -1,9 +1,12 @@
 import { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
-import { Album } from "./models/Album";
+import { Album, FeaturedAlbums } from "./models/Album";
 import { Artist } from "./models/Artist";
 import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch } from "./models/Paging";
 import { Track } from "./models/Track";
+import { Category } from './models/Category';
+import { FeaturedPlaylists } from "./models/Playlist";
+import { RecommendationsQuery, Recommendations } from "./models/Recomendations";
 export interface OptionalRequestParams {
     limit?: number;
     offset?: number;
@@ -40,6 +43,34 @@ export default class EasySpotify {
     searchPlaylists(query: string, options?: OptionalRequestParams): Promise<PagingPlaylists>;
     searchTracks(query: string, options?: OptionalRequestParams): Promise<PagingTracks>;
     search(query: string, options: SearchRequestParams): Promise<PagingSearch>;
+    getBrowseCategory(id: string, options?: {
+        country?: string;
+        locale?: string;
+    }): Promise<Category>;
+    getBrowseCategoryPlaylists(id: string, options: {
+        country?: string;
+        limit?: number;
+        offset?: number;
+    }): Promise<PagingPlaylists>;
+    getBrowseListOfCategories(options: {
+        locale?: string;
+        country?: string;
+        offset?: number;
+        limit?: number;
+    }): Promise<any>;
+    getBrowseFeaturedPlaylists(options: {
+        locale?: string;
+        country?: string;
+        timestamp?: Date;
+        limit?: number;
+        offset?: number;
+    }): Promise<FeaturedPlaylists>;
+    getBrowseNewReleases(options: {
+        country?: string;
+        limit?: number;
+        offset?: number;
+    }): Promise<FeaturedAlbums>;
+    getBrowseRecommendations(query: RecommendationsQuery): Promise<Recommendations>;
     buildRequest(endpoint: string, params?: AxiosRequestConfig["params"], method?: string): AxiosPromise<any>;
     private buildHeaders;
 }

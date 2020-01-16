@@ -1,16 +1,18 @@
 import { AxiosResponse } from "axios";
 import { expect, use } from "chai";
 import "mocha";
-import {SinonStub, stub} from "sinon";
+import { SinonStub, stub } from "sinon";
 import sinonChai = require("sinon-chai");
 use(sinonChai);
 
 import EasySpotify from "../src/EasySpotify";
 import EasySpotifyConfig from "../src/EasySpotifyConfig";
-import { Album, SimplifiedAlbum } from "../src/models/Album";
+import { Album, SimplifiedAlbum, FeaturedAlbums } from "../src/models/Album";
 import { Artist } from "../src/models/Artist";
-import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch } from "../src/models/Paging";
+import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch, PagingCategories } from "../src/models/Paging";
 import { Track } from "../src/models/Track";
+import { Category } from "../src/models/Category";
+import { FeaturedPlaylists } from "../src/models/Playlist";
 
 const params: any = undefined;
 const baseHttpClientConfig = {
@@ -47,6 +49,12 @@ describe("EasySpotify", () => {
     expect(spotify.searchArtists).to.exist;
     expect(spotify.searchPlaylists).to.exist;
     expect(spotify.searchTracks).to.exist;
+
+    expect(spotify.getBrowseCategory).to.exist;
+    expect(spotify.getBrowseCategoryPlaylists).to.exist;
+    expect(spotify.getBrowseListOfCategories).to.exist;
+    expect(spotify.getBrowseFeaturedPlaylists).to.exist;
+    expect(spotify.getBrowseNewReleases).to.exist;
   });
 
   it("should create an instance of EasySpotify", () => {
@@ -74,13 +82,13 @@ describe("EasySpotify", () => {
     expect(spotify.getApiUrl()).to.eq("new apiURL");
   });
 
-  describe("Albums", () => {
+  describe("Methods", () => {
 
     describe("getAlbum", () => {
       let id = "4aawyAB9vmqN3uQ7FjRGTy";
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: {id, name : "Cyndi Lauper"}});
+        httpClientStub.resolves({ data: { id, name: "Cyndi Lauper" } });
       });
 
       it("should call httpClient method", async () => {
@@ -89,7 +97,7 @@ describe("EasySpotify", () => {
       });
 
       it("should call httpClient with correct config", async () => {
-        const album: Album = await spotify.getAlbum(id, {market: "ES"});
+        const album: Album = await spotify.getAlbum(id, { market: "ES" });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { market: "ES" },
@@ -105,7 +113,7 @@ describe("EasySpotify", () => {
       });
 
       it("should not get a album if invalid id", async () => {
-        httpClientStub.rejects({response: { status: 400}});
+        httpClientStub.rejects({ response: { status: 400 } });
         id = "invalidId";
         try {
           await spotify.getAlbum(id);
@@ -121,13 +129,15 @@ describe("EasySpotify", () => {
       beforeEach(() => {
         // Fake response with reduced payload as you would get from Spotify Web API
         // Check https://developer.spotify.com/documentation/web-api/reference/albums/get-several-albums/
-        httpClientStub.resolves({ data: {
-          albums: [
-            {id: "41MnTivkwTO3UUJ8DrqEJJ", name : "Cyndi Lauper"},
-            {id: "6JWc4iAiJ9FjyK0B59ABb4", name : "Rock is Good"},
-            {id: "6UXCm6bOO4gFlDQZV5yL37", name : "Just a Fake Name"},
-          ],
-        }});
+        httpClientStub.resolves({
+          data: {
+            albums: [
+              { id: "41MnTivkwTO3UUJ8DrqEJJ", name: "Cyndi Lauper" },
+              { id: "6JWc4iAiJ9FjyK0B59ABb4", name: "Rock is Good" },
+              { id: "6UXCm6bOO4gFlDQZV5yL37", name: "Just a Fake Name" },
+            ],
+          }
+        });
       });
 
       it("should call httpClient method", async () => {
@@ -136,11 +146,11 @@ describe("EasySpotify", () => {
       });
 
       it("should call httpClient with correct config", async () => {
-        const albums: Album[] = await spotify.getAlbums(ids, {market: "ES"});
+        const albums: Album[] = await spotify.getAlbums(ids, { market: "ES" });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           // tslint:disable-next-line:max-line-length
-          params: {ids: `${ids}`, market: "ES"},
+          params: { ids: `${ids}`, market: "ES" },
           url: "https://api.spotify.com/v1/albums",
         });
       });
@@ -153,7 +163,7 @@ describe("EasySpotify", () => {
       });
 
       it("should throw error if invalid ids", async () => {
-        httpClientStub.rejects({response: { status: 400}});
+        httpClientStub.rejects({ response: { status: 400 } });
         ids = ["invalid", "id"];
         try {
           await await spotify.getAlbums(ids);
@@ -168,14 +178,16 @@ describe("EasySpotify", () => {
       let id = "4aawyAB9vmqN3uQ7FjRGTy";
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          href: "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy/tracks?offset=0&limit=3",
-          items: [
-            {id: "41MnTivkwTO3UUJ8DrqEJJ", name: "Cyndi Lauper"},
-            {id: "6JWc4iAiJ9FjyK0B59ABb4", name: "Rock is Good"},
-            {id: "6UXCm6bOO4gFlDQZV5yL37", name: "Just a Fake Name"},
-          ],
-        }});
+        httpClientStub.resolves({
+          data: {
+            href: "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy/tracks?offset=0&limit=3",
+            items: [
+              { id: "41MnTivkwTO3UUJ8DrqEJJ", name: "Cyndi Lauper" },
+              { id: "6JWc4iAiJ9FjyK0B59ABb4", name: "Rock is Good" },
+              { id: "6UXCm6bOO4gFlDQZV5yL37", name: "Just a Fake Name" },
+            ],
+          }
+        });
       });
 
       it("should call httpClient method", async () => {
@@ -184,23 +196,23 @@ describe("EasySpotify", () => {
       });
 
       it("should call httpClient method with correct config", async () => {
-        const albumTracks: PagingTracks = await spotify.getAlbumTracks("4aawyAB9vmqN3uQ7FjRGTy", {limit: 3, offset: 0});
+        const albumTracks: PagingTracks = await spotify.getAlbumTracks("4aawyAB9vmqN3uQ7FjRGTy", { limit: 3, offset: 0 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: {limit: 3, offset: 0},
+          params: { limit: 3, offset: 0 },
           url: "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy/tracks",
         });
       });
 
       it("should get tracks for valid album", async () => {
-        const tracks: PagingTracks = await spotify.getAlbumTracks("4aawyAB9vmqN3uQ7FjRGTy", {offset: 0, limit: 3});
+        const tracks: PagingTracks = await spotify.getAlbumTracks("4aawyAB9vmqN3uQ7FjRGTy", { offset: 0, limit: 3 });
         expect(tracks.items.length).to.eq(3);
         expect(tracks.items[0].id).to.eq("41MnTivkwTO3UUJ8DrqEJJ");
         expect(tracks.items[1].name).to.exist;
       });
 
       it("should not get tracks for invalid album", async () => {
-        httpClientStub.rejects({response: { status: 400}});
+        httpClientStub.rejects({ response: { status: 400 } });
         id = "invalid";
         try {
           await await spotify.getAlbumTracks(id);
@@ -214,11 +226,13 @@ describe("EasySpotify", () => {
       let id = "4aawyAB9vmqN3uQ7FjRGTy";
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          id: "0OdUWJ0sBjDrqHygGUXeCF",
-          name: "Band of Horses",
-          popularity: 100,
-        }});
+        httpClientStub.resolves({
+          data: {
+            id: "0OdUWJ0sBjDrqHygGUXeCF",
+            name: "Band of Horses",
+            popularity: 100,
+          }
+        });
       });
 
       it("should call httpClient method", async () => {
@@ -242,7 +256,7 @@ describe("EasySpotify", () => {
       });
 
       it("should not get artist if invalid id", async () => {
-        httpClientStub.rejects({response: { status: 400}});
+        httpClientStub.rejects({ response: { status: 400 } });
         id = "invalid";
         try {
           await await spotify.getArtist(id);
@@ -256,21 +270,23 @@ describe("EasySpotify", () => {
       let ids = ["0OdUWJ0sBjDrqHygGUXeCF", "3dBVyJ7JuOMt4GE9607Qin", "0oSGxfWSnnOXhD2fKuz2Gy"];
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          artists: [{
-            id: "0OdUWJ0sBjDrqHygGUXeCF",
-            name: "Band of Horses",
-            popularity: 14,
-          }, {
-            id: "3dBVyJ7JuOMt4GE9607Qin",
-            name: "T. Rex",
-            popularity: 62,
-          }, {
-            id: "0oSGxfWSnnOXhD2fKuz2Gy",
-            name: "David Bowie",
-            popularity: 82,
-          }],
-        }});
+        httpClientStub.resolves({
+          data: {
+            artists: [{
+              id: "0OdUWJ0sBjDrqHygGUXeCF",
+              name: "Band of Horses",
+              popularity: 14,
+            }, {
+              id: "3dBVyJ7JuOMt4GE9607Qin",
+              name: "T. Rex",
+              popularity: 62,
+            }, {
+              id: "0oSGxfWSnnOXhD2fKuz2Gy",
+              name: "David Bowie",
+              popularity: 82,
+            }],
+          }
+        });
       });
 
       it("should call httpClient method", async () => {
@@ -297,7 +313,7 @@ describe("EasySpotify", () => {
 
       it("should not get artists if invalid ids", async () => {
         ids = ["invalid", "id"];
-        httpClientStub.rejects({response: { status: 400}});
+        httpClientStub.rejects({ response: { status: 400 } });
         try {
           const artists: Artist[] = await spotify.getArtists(ids);
         } catch (err) {
@@ -310,27 +326,29 @@ describe("EasySpotify", () => {
       const id = "1vCWHaC5f2uS3yhpwWbIA6";
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          // tslint:disable-next-line:max-line-length
-          href: "https://api.spotify.com/v1/artists/1vCWHaC5f2uS3yhpwWbIA6/albums?offset=0&limit=3market=ES&include_groups=appears_on",
-          items: [
-            {id: "43977e0YlJeMXG77uCCSMX", name: "Shut Up Lets Dance (Vol. II)", album_group: "appears_on"},
-            {id: "189ngoT3WxR5mZSYkAGOLF", name: "Classic Club Monsters", album_group: "appears_on"},
-          ],
-        }});
+        httpClientStub.resolves({
+          data: {
+            // tslint:disable-next-line:max-line-length
+            href: "https://api.spotify.com/v1/artists/1vCWHaC5f2uS3yhpwWbIA6/albums?offset=0&limit=3market=ES&include_groups=appears_on",
+            items: [
+              { id: "43977e0YlJeMXG77uCCSMX", name: "Shut Up Lets Dance (Vol. II)", album_group: "appears_on" },
+              { id: "189ngoT3WxR5mZSYkAGOLF", name: "Classic Club Monsters", album_group: "appears_on" },
+            ],
+          }
+        });
       });
 
       it("should call httpClient method", async () => {
         const artistAlbums: PagingAlbums =
           await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy",
-          {include_groups: "appears_on", limit: 3, offset: 0, market: "ES"});
+            { include_groups: "appears_on", limit: 3, offset: 0, market: "ES" });
         expect(httpClientStub).to.have.been.calledOnce;
       });
 
       it("should call httpClient method with correct settings", async () => {
         const artistAlbums: PagingAlbums =
           await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy",
-          {include_groups: "appears_on", limit: 3, offset: 0, market: "ES"});
+            { include_groups: "appears_on", limit: 3, offset: 0, market: "ES" });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { include_groups: "appears_on", limit: 3, market: "ES", offset: 0 },
@@ -341,7 +359,7 @@ describe("EasySpotify", () => {
       it("should get albums for artist if valid id", async () => {
         const artistAlbums: PagingAlbums =
           await spotify.getArtistAlbums("4aawyAB9vmqN3uQ7FjRGTy",
-          {include_groups: "appears_on", limit: 3, offset: 0, market: "ES"});
+            { include_groups: "appears_on", limit: 3, offset: 0, market: "ES" });
         expect(artistAlbums).to.not.be.empty;
         expect(artistAlbums.items.length).to.eq(2);
         expect(artistAlbums.items[0].id).to.eq("43977e0YlJeMXG77uCCSMX");
@@ -353,35 +371,37 @@ describe("EasySpotify", () => {
       const id = "1vCWHaC5f2uS3yhpwWbIA6";
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          tracks: [
-            {
-              id: "44AyOl4qVkzS48vBsbNXaC",
-              name: "Can't Help Falling in Love",
-              uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
-            },
-            {
-              id: "44AyOl4qVkzS48vBsbNXaC",
-              name: "Can't Help Falling in Love",
-              uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
-            },
-          ],
-        }});
+        httpClientStub.resolves({
+          data: {
+            tracks: [
+              {
+                id: "44AyOl4qVkzS48vBsbNXaC",
+                name: "Can't Help Falling in Love",
+                uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
+              },
+              {
+                id: "44AyOl4qVkzS48vBsbNXaC",
+                name: "Can't Help Falling in Love",
+                uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
+              },
+            ],
+          }
+        });
       });
 
       it("should call httpClient method with correct settings", async () => {
         const artistTopTracks: Track[] =
-          await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", {market: "ES"});
+          await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", { market: "ES" });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: { market: "ES"},
+          params: { market: "ES" },
           url: "https://api.spotify.com/v1/artists/4aawyAB9vmqN3uQ7FjRGTy/top-tracks",
         });
       });
 
       it("should get albums for artist if valid id", async () => {
         const artistTopTracks: Track[] =
-          await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", {market: "ES"});
+          await spotify.getArtistTopTracks("4aawyAB9vmqN3uQ7FjRGTy", { market: "ES" });
         expect(artistTopTracks).to.not.be.empty;
         expect(artistTopTracks.length).to.eq(2);
         expect(artistTopTracks[0].id).to.eq("44AyOl4qVkzS48vBsbNXaC");
@@ -391,34 +411,36 @@ describe("EasySpotify", () => {
 
     describe("getArtistRelatedArtists", () => {
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          artists: [
-            {
-              external_urls : {
-                spotify : "https://open.spotify.com/artist/5ZKMPRDHc7qElVJFh3uRqB",
+        httpClientStub.resolves({
+          data: {
+            artists: [
+              {
+                external_urls: {
+                  spotify: "https://open.spotify.com/artist/5ZKMPRDHc7qElVJFh3uRqB",
+                },
+                followers: {
+                  href: null,
+                  total: 18108,
+                },
+                genres: ["rockabilly"],
+                href: "https://api.spotify.com/v1/artists/5ZKMPRDHc7qElVJFh3uRqB",
+                id: "5ZKMPRDHc7qElVJFh3uRqB",
               },
-              followers : {
-                href : null,
-                total : 18108,
+              {
+                external_urls: {
+                  spotify: "https://open.spotify.com/artist/5ZKMPRDHc7qElVJFh3uRqB",
+                },
+                followers: {
+                  href: null,
+                  total: 18108,
+                },
+                genres: ["rockabilly"],
+                href: "https://api.spotify.com/v1/artists/5ZKMPRDHc7qElVJFh3uRqB",
+                id: "5ZKMPRDHc7qElVJFh3uRqB",
               },
-              genres : [ "rockabilly" ],
-              href : "https://api.spotify.com/v1/artists/5ZKMPRDHc7qElVJFh3uRqB",
-              id : "5ZKMPRDHc7qElVJFh3uRqB",
-            },
-            {
-              external_urls : {
-                spotify : "https://open.spotify.com/artist/5ZKMPRDHc7qElVJFh3uRqB",
-              },
-              followers : {
-                href : null,
-                total : 18108,
-              },
-              genres : [ "rockabilly" ],
-              href : "https://api.spotify.com/v1/artists/5ZKMPRDHc7qElVJFh3uRqB",
-              id : "5ZKMPRDHc7qElVJFh3uRqB",
-            },
-          ],
-        }});
+            ],
+          }
+        });
       });
 
       it("should call httpClient method with correct settings", async () => {
@@ -439,34 +461,36 @@ describe("EasySpotify", () => {
 
     describe("searchAlbums", () => {
       beforeEach(() => {
-        httpClientStub.resolves({ data: {
-          albums: {
-            items: [
-              {
-                album_type: "album",
-                id: "6YkkoAG1rnLqET8SgT6ngp",
-              },
-              {
-                album_type: "album",
-                id: "1ZH5g1RDq3GY1OvyD0w0s2",
-              },
-            ],
-            total: 40000,
-          },
-        }});
+        httpClientStub.resolves({
+          data: {
+            albums: {
+              items: [
+                {
+                  album_type: "album",
+                  id: "6YkkoAG1rnLqET8SgT6ngp",
+                },
+                {
+                  album_type: "album",
+                  id: "1ZH5g1RDq3GY1OvyD0w0s2",
+                },
+              ],
+              total: 40000,
+            },
+          }
+        });
       });
 
       it("should call httpClient method with correct settings", async () => {
-        const albums: PagingAlbums = await spotify.searchAlbums("Rock", {limit: 2});
+        const albums: PagingAlbums = await spotify.searchAlbums("Rock", { limit: 2 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: {limit: 2, type: "album", q: "Rock"},
+          params: { limit: 2, type: "album", q: "Rock" },
           url: "https://api.spotify.com/v1/search",
         });
       });
 
       it("should get albums for valid search", async () => {
-        const albums: PagingAlbums = await spotify.searchAlbums("Rock", {limit: 2});
+        const albums: PagingAlbums = await spotify.searchAlbums("Rock", { limit: 2 });
         expect(albums.items).to.not.be.empty;
         expect(albums.items[0].id).to.eq("6YkkoAG1rnLqET8SgT6ngp");
       });
@@ -474,37 +498,39 @@ describe("EasySpotify", () => {
 
     describe("searchArtists", () => {
       beforeEach(() => {
-        httpClientStub.resolves({data: {
-          artists: {
-            items: [
-              {
-                name: "Elvis Presley",
-                type: "artist",
-                uri: "spotify:artist:43ZHCT0cAZBISjO8DG9PnE",
-              },
-              {
-                name: "Edi Rock",
-                type: "artist",
-                uri: "spotify:artist:2fYAyTS2erZgqEHKHYqgi2",
-              },
-            ],
-            offset: 2,
-            total: 4442,
-          },
-        }});
+        httpClientStub.resolves({
+          data: {
+            artists: {
+              items: [
+                {
+                  name: "Elvis Presley",
+                  type: "artist",
+                  uri: "spotify:artist:43ZHCT0cAZBISjO8DG9PnE",
+                },
+                {
+                  name: "Edi Rock",
+                  type: "artist",
+                  uri: "spotify:artist:2fYAyTS2erZgqEHKHYqgi2",
+                },
+              ],
+              offset: 2,
+              total: 4442,
+            },
+          }
+        });
       });
 
       it("should call httpClient with correct settings", async () => {
-        const artists: PagingArtists = await spotify.searchArtists("Elvis", {limit: 2});
+        const artists: PagingArtists = await spotify.searchArtists("Elvis", { limit: 2 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: { type: "artist", limit: 2, q: "Elvis"},
+          params: { type: "artist", limit: 2, q: "Elvis" },
           url: "https://api.spotify.com/v1/search",
         });
       });
 
       it("should get artists for valid search", async () => {
-        const artists: PagingArtists = await spotify.searchArtists("Elvis", {limit: 2});
+        const artists: PagingArtists = await spotify.searchArtists("Elvis", { limit: 2 });
         expect(artists.items).to.not.be.empty;
         expect(artists.items[0].name).to.eq("Elvis Presley");
       });
@@ -513,36 +539,38 @@ describe("EasySpotify", () => {
     describe("searchPlaylists", () => {
 
       beforeEach(() => {
-        httpClientStub.resolves({data: {
-          playlists: {
-            items: [
-              {
-                id: "37i9dQZF1DX3D78h6FPBPC",
-                name: "This Is ABBA",
-              },
-              {
-                id: "3AGOiaoRXMSjswCLtuNqv5",
-                name: "ABBA Best Of",
-              },
-            ],
-            limit: 2,
-            offset: 0,
-            total: 21654,
-          },
-        }});
+        httpClientStub.resolves({
+          data: {
+            playlists: {
+              items: [
+                {
+                  id: "37i9dQZF1DX3D78h6FPBPC",
+                  name: "This Is ABBA",
+                },
+                {
+                  id: "3AGOiaoRXMSjswCLtuNqv5",
+                  name: "ABBA Best Of",
+                },
+              ],
+              limit: 2,
+              offset: 0,
+              total: 21654,
+            },
+          }
+        });
       });
 
       it("should call httpClient with correct settings", async () => {
-        const playlists: PagingPlaylists = await spotify.searchPlaylists("abba", {limit: 2, market: "US"});
+        const playlists: PagingPlaylists = await spotify.searchPlaylists("abba", { limit: 2, market: "US" });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: { type: "playlist", limit: 2, q: "abba", market: "US"},
+          params: { type: "playlist", limit: 2, q: "abba", market: "US" },
           url: "https://api.spotify.com/v1/search",
         });
       });
 
       it("should get playlists for valid search", async () => {
-        const playlists: PagingPlaylists = await spotify.searchPlaylists("abba", {limit: 2, market: "US"});
+        const playlists: PagingPlaylists = await spotify.searchPlaylists("abba", { limit: 2, market: "US" });
         expect(playlists.items).to.not.be.empty;
         expect(playlists.limit).to.eq(2);
         expect(playlists.items.length).to.eq(2);
@@ -551,36 +579,38 @@ describe("EasySpotify", () => {
 
     describe("searchTracks", () => {
       beforeEach(() => {
-        httpClientStub.resolves({data: {
-          tracks: {
-            items: [
-              {
-                id: "4HpiwfnQvs867JNWeLy1vr",
-                name: "Todos Os Cantos (Ao Vivo)",
-              },
-              {
-                id: "0aUGXSCmdJz9I9kdY9e9kk",
-                name: "Love a Queima Roupa - Ao Vivo",
-              },
-            ],
-            limit: 2,
-            offset: 0,
-            total: 21654,
-          },
-        }});
+        httpClientStub.resolves({
+          data: {
+            tracks: {
+              items: [
+                {
+                  id: "4HpiwfnQvs867JNWeLy1vr",
+                  name: "Todos Os Cantos (Ao Vivo)",
+                },
+                {
+                  id: "0aUGXSCmdJz9I9kdY9e9kk",
+                  name: "Love a Queima Roupa - Ao Vivo",
+                },
+              ],
+              limit: 2,
+              offset: 0,
+              total: 21654,
+            },
+          }
+        });
       });
 
       it("should call httpClient with correct settings", async () => {
-        const tracks: PagingTracks = await spotify.searchTracks("love", {limit: 2});
+        const tracks: PagingTracks = await spotify.searchTracks("love", { limit: 2 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: { type: "track", limit: 2, q: "love"},
+          params: { type: "track", limit: 2, q: "love" },
           url: "https://api.spotify.com/v1/search",
         });
       });
 
       it("should get playlists for valid search", async () => {
-        const tracks: PagingTracks = await spotify.searchTracks("love", {limit: 2});
+        const tracks: PagingTracks = await spotify.searchTracks("love", { limit: 2 });
         expect(tracks.items).to.not.be.empty;
         expect(tracks.limit).to.eq(2);
         expect(tracks.items.length).to.eq(2);
@@ -591,26 +621,30 @@ describe("EasySpotify", () => {
     describe("search", () => {
       beforeEach(() => {
         httpClientStub.resolves({
-          data: {artists: {total: 0, items: []}, playlists: {items: [
-            {
-              id: "37i9dQZF1DX50QitC6Oqtn",
-              name: "Love Pop",
-            },
-          ], total: 1}},
+          data: {
+            artists: { total: 0, items: [] }, playlists: {
+              items: [
+                {
+                  id: "37i9dQZF1DX50QitC6Oqtn",
+                  name: "Love Pop",
+                },
+              ], total: 1
+            }
+          },
         });
       });
 
       it("should call httpClient with correct settings", async () => {
-        const response: PagingSearch = await spotify.search("love", {type: "artist,playlist", limit: 2});
+        const response: PagingSearch = await spotify.search("love", { type: "artist,playlist", limit: 2 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
-          params: { type: "artist,playlist", q: "love", limit: 2},
+          params: { type: "artist,playlist", q: "love", limit: 2 },
           url: "https://api.spotify.com/v1/search",
         });
       });
 
       it("should get response with valid search", async () => {
-        const response: PagingSearch = await spotify.search("love", {type: "artist,playlist", limit: 2});
+        const response: PagingSearch = await spotify.search("love", { type: "artist,playlist", limit: 2 });
         expect(response.artists).to.exist;
         expect(response.playlists).to.exist;
         expect(response.playlists.items).to.not.be.empty;
@@ -618,5 +652,250 @@ describe("EasySpotify", () => {
       });
 
     });
+
+    describe('getBrowseCategory', () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            href: "https://api.spotify.com/v1/browse/categories/party",
+            icons: [{
+              height: 274,
+              url: "https://datsnxq1rwndn.cloudfront.net/media/derived/party-274x274_73d1907a7371c3bb96a288390a96ee27_0_0_274_274.jpg",
+              width: 274
+            }],
+            id: "party",
+            name: "Party"
+          },
+        });
+      });
+
+      it("should get response with a category", async () => {
+        const category: Category = await spotify.getBrowseCategory("party", { country: "US" });
+        expect(category.href).to.exist;
+        expect(category.icons).to.exist;
+        expect(category.icons).to.not.be.empty;
+        expect(category.icons[0].height).to.eq(274);
+        expect(category.id).to.exist;
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        const category: Category = await spotify.getBrowseCategory("party", { country: "BR" });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { country: "BR" },
+          url: "https://api.spotify.com/v1/browse/categories/party",
+        });
+      });
+
+    });
+
+    describe('getBrowseCategoryPlaylists', () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            playlists: {
+              items: [
+                {
+                  id: "37i9dQZF1DX8mBRYewE6or",
+                  name: "Sexta",
+                },
+                {
+                  id: "3AGOiaoRXMSjswCLtuNqv5",
+                  name: "Segue o Baile",
+                },
+              ],
+              limit: 20,
+              offset: 0,
+              total: 21654,
+            },
+          }
+        });
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        const playlists: PagingPlaylists = await spotify.getBrowseCategoryPlaylists("party", { country: "BR", limit: 20 });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { country: "BR", limit: 20 },
+          url: "https://api.spotify.com/v1/browse/categories/party/playlists",
+        });
+      });
+
+      it('should get response with playlists', async () => {
+        const playlists: PagingPlaylists = await spotify.getBrowseCategoryPlaylists("party", { country: "BR", limit: 20 });
+        expect(playlists.items).to.exist;
+        expect(playlists.items).to.not.be.empty;
+        expect(playlists.limit).to.eq(20);
+        expect(playlists.total).to.exist;
+      })
+    });
+
+    describe('getBrowseListOfCategories', () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            categories: {
+              href: "https://api.spotify.com/v1/browse/categories?offset=0&limit=20",
+              items: [{
+                id: "toplists",
+                name: "Top Lists"
+              }, {
+                id: "mood",
+                name: "Mood"
+              }],
+              limit: 10,
+              offset: 0,
+              total: 31,
+            }
+          }
+        });
+      });
+
+      it('should call httpClient with correct settings', async () => {
+        const categories: PagingCategories = await spotify.getBrowseListOfCategories({ offset: 0, limit: 10 });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { offset: 0, limit: 10 },
+          url: "https://api.spotify.com/v1/browse/categories",
+        });
+      });
+
+      it('should get list of categories', async () => {
+        const categories: PagingCategories = await spotify.getBrowseListOfCategories({ offset: 0, limit: 10 });
+        expect(categories.items).to.exist;
+        expect(categories.items).to.not.be.empty;
+        expect(categories.total).to.exist;
+        expect(categories.limit).to.exist;
+      });
+    });
+
+    describe('getBrowseFeaturedPlaylists', () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            message: "Monday morning music, coming right up!",
+            playlists: {
+              items: [
+                {
+                  description: "Relaxed deep house to slowly help you get back on your feet and ready yourself for a productive week.",
+                  id: "6ftJBzU2LLQcaKefMi7ee7",
+                  name: "Monday Morning Mood",
+                },
+                {
+                  description: "Du kommer studsa ur sängen med den här spellistan.",
+                  id: "4uOEx4OUrkoGNZoIlWMUbO",
+                  name: "Upp och hoppa!",
+                }
+              ],
+              limit: 5,
+              offset: 1,
+              total: 20,
+            }
+          }
+        });
+      });
+
+      it('should call httpClient with correct settings', async () => {
+        const featured: FeaturedPlaylists = await spotify.getBrowseFeaturedPlaylists({ offset: 0, limit: 10, timestamp: new Date("2020-01-01") });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { offset: 0, limit: 10, timestamp: "2020-01-01T00:00:00.000Z" },
+          url: "https://api.spotify.com/v1/browse/featured-playlists",
+        });
+      });
+
+      it('should get featured playlists', async () => {
+        const featured: FeaturedPlaylists = await spotify.getBrowseFeaturedPlaylists({ offset: 0, limit: 10, timestamp: new Date("2020-01-01") });
+        expect(featured.message).to.exist;
+        expect(featured.playlists.items).to.not.be.empty;
+        expect(featured.playlists.items[0].id).to.exist;
+        expect(featured.playlists.total).to.exist;
+      });
+    });
+
+    describe('getBrowseNewReleases', () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            message: "Some cool message here",
+            albums: {
+              items: [{
+                id: "5ZX4m5aVSmWQ5iHAPQpT71",
+                name: "Runnin'",
+              }, {
+                id: "0geTzdk2InlqIoB16fW9Nd",
+                name: "Sneakin",
+              }],
+              limit: 10,
+              offset: 0,
+              total: 300,
+            }
+          }
+        });
+      });
+
+      it('should call httpClient with correct settings', async () => {
+        const featured: FeaturedAlbums = await spotify.getBrowseNewReleases({ offset: 0, limit: 10 });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { offset: 0, limit: 10 },
+          url: "https://api.spotify.com/v1/browse/new-releases",
+        });
+      });
+
+      it('should get albums', async () => {
+        const featured: FeaturedAlbums = await spotify.getBrowseNewReleases({ offset: 0, limit: 10 });
+        expect(featured.message).to.exist;
+        expect(featured.albums.items).to.not.be.empty;
+        expect(featured.albums.limit).to.exist;
+        expect(featured.albums.offset).to.exist;
+      });
+    });
+
+    describe('getBrowseRecommendations', () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            tracks: [{
+              id: "1TKYPzH66GwsqyJFKFkBHQ",
+              is_playable: true,
+              name: "Music Is Life"
+            }, {
+              id: "15iosIuxC3C53BgsM5Uggs",
+              is_playable: true,
+              name: "All Night",
+            }],
+            seeds: [{
+              initialPoolSize: 500,
+              afterFilteringSize: 380,
+              afterRelinkingSize: 365,
+              id: "4NHQUGzhtTLFvgF5SZesLK",
+            }]
+          }
+        });
+      });
+
+      it('should call httpClient with correct settings', async () => {
+        const recommendations = await spotify.getBrowseRecommendations({
+          seed_tracks: ["4NHQUGzhtTLFvgF5SZesLK", "1VBflYyxBhnDc9uVib98rw"],
+          target_loudness: 0.2,
+        });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { seed_tracks: "4NHQUGzhtTLFvgF5SZesLK,1VBflYyxBhnDc9uVib98rw", target_loudness: 0.2 },
+          url: "https://api.spotify.com/v1/recommendations",
+        });
+      });
+
+      it('should get recomendations', async () => {
+        const recommendations = await spotify.getBrowseRecommendations({
+          seed_tracks: ["4NHQUGzhtTLFvgF5SZesLK", "1VBflYyxBhnDc9uVib98rw"],
+          target_loudness: 0.2,
+        });
+        expect(recommendations.seeds).to.not.be.empty;
+        expect(recommendations.tracks).to.not.be.empty;
+        expect(recommendations.tracks.length).to.eq(2);
+      });
+    })
   });
 });

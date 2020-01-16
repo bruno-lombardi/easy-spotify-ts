@@ -2,6 +2,7 @@ import { SimplifiedAlbum } from "./Album";
 import { SimplifiedArtist } from "./Artist";
 import { SimplifiedPlaylist } from "./Playlist";
 import { SimplifiedTrack } from "./SimplifiedTrack";
+import { Category } from "./Category";
 
 export interface Paging {
   href: string;
@@ -27,6 +28,10 @@ export interface PagingArtists extends Paging {
 
 export interface PagingPlaylists extends Paging {
   items: SimplifiedPlaylist[];
+}
+
+export interface PagingCategories extends Paging {
+  items: Category[];
 }
 
 export interface PagingSearch {

@@ -1,6 +1,12 @@
 import { ExternalUrls } from "./ExternalUrls";
 import { Image } from "./Image";
 import { User } from "./User";
+import { PagingPlaylists } from "./Paging";
+
+export interface FeaturedPlaylists {
+  message: string;
+  playlists: PagingPlaylists;
+}
 
 export interface SimplifiedPlaylist {
   collaborative: boolean;

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.1"
   },
   "files": [
     "dist"
@@ -18,7 +18,7 @@
     "chai": "^4.2.0",
     "codecov": "^3.2.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
+    "nyc": "^15.0.0",
     "rimraf": "^2.6.2",
     "sinon": "^7.1.1",
     "sinon-chai": "^3.3.0",
@@ -65,7 +65,8 @@
     "library",
     "typescript",
     "web",
-    "api"
+    "api",
+    "spotify recommendations"
   ],
   "author": "Bruno Lombardi <djfrizer1@gmail.com> (https://github.com/bruno-lombardi)",
   "license": "MIT",

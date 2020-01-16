@@ -11,7 +11,7 @@ This is a Javascript library written in Typescript that wraps [Spotify Web API](
 ![Demo](demo.gif)
 
 ## Installation and Usage
-This library is easier than the JS version to use, because it doesn't have any external dependencies. Also, if you like **type hints**, or **intellisense**, here you get them evem for responses that come from Spotify.
+This library is lightweight and only have one external dependency, which is axios, a powerful HTTP requests library. Also, if you like **type hints**, or **intellisense**, with easy-spotify-ts you have them for responses that come from Spotify Web API.
 
 ### NodeJS Environment
 
@@ -24,6 +24,8 @@ $ npm install easy-spotify-ts --save
 `app.js`
 ```js
 const { EasySpotify, EasySpotifyConfig } = require("easy-spotify-ts");
+// or with ES Modules:
+import { EasySpotify, EasySpotifyConfig } from 'easy-spotify-ts';
 
 const spotify = new EasySpotify(new EasySpotifyConfig("your-api-token"));
 
@@ -183,11 +185,95 @@ const result = await spotify.search("love", {type: "artist,playlist", limit: 2})
 // result.albums -> undefined
 ```
 
+### getBrowseCategory(id: string, options?: { country?: string, locale?: string }): Promise\<Category\>
+This method returns a single category used to tag items in Spotify (on, for example, the Spotify player’s “Browse” tab).
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-category/)
+```ts
+const result = await spotify.getBrowseCategory("party", {country: "US"});
+
+// do something with result
+// result.href
+// result.icons[0].height
+```
+
+### getBrowseCategoryPlaylists(id: string, options: { country?: string, limit?: number, offset?: number }): Promise\<PagingPlaylists\>
+This method returns a paged list of Spotify playlists tagged with a particular category.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-categorys-playlists/)
+```ts
+const result = await spotify.getBrowseCategoryPlaylists("party", {country: "US"});
+
+// do something with result
+// result.href
+// result.items[0].description
+// result.limit
+// result.offset
+```
+
+### getBrowseListOfCategories(options: {locale?: string, country?: string, offset?: number, limit?: number}): Promise\<PagingCategories\>
+This method returns a list of categories used to tag items in Spotify (on, for example, the Spotify player’s “Browse” tab).
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-list-categories/)
+```ts
+const result = await spotify.getBrowseListOfCategories({country: "US", limit: 10});
+
+// do something with result
+// result.href
+// result.items[0].id
+// result.limit
+// result.offset
+```
+
+### getBrowseFeaturedPlaylists(options: {locale?: string, country?: string, timestamp?: Date, limit?: number, offset?: number}): Promise\<FeaturedPlaylists\>
+This method returns a list of Spotify featured playlists (shown, for example, on a Spotify player’s ‘Browse’ tab).
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-list-featured-playlists/)
+```ts
+const result = await spotify.getBrowseFeaturedPlaylists({country: "US", limit: 10});
+
+// do something with result
+// result.message
+// result.playlists.items[0].name
+// result.playlists.limit
+// result.playlists.offset
+```
+
+### getBrowseNewReleases(options: {country?: string, limit?: number, offset?: number}): Promise\<FeaturedAlbums\>
+This method returns a list of new album releases featured in Spotify (shown, for example, on a Spotify player’s “Browse” tab).
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-list-new-releases/)
+```ts
+const result = await spotify.getBrowseNewReleases({country: "US", limit: 10});
+
+// do something with result
+// result.message
+// result.albums.items[0].name
+// result.albums.limit
+// result.albums.offset
+```
+
+### getBrowseRecommendations(query: RecommendationsQuery): Promise\<PagingCategories\>
+This method can create a playlist-style listening experience based on seed artists, tracks and genres. There is a huge query options to use,
+I suggest you to really check the documentation, though, each target_*
+field has a hint when you type that should help you know what you're 
+doing.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/)
+```ts
+const result = await spotify.getBrowseRecommendations(
+  {
+    limit: 10,
+    seed_tracks: ["4NHQUGzhtTLFvgF5SZesLK", "1VBflYyxBhnDc9uVib98rw"],
+    target_loudness: 0.2,
+    min_instrumentalness: 0.4,
+    max_instrumentalness: 0.9,
+  }
+);
+
+// do something with result
+// result.seeds
+// result.tracks
+```
 
 ## <a name="features"></a> Features to implement
 - [x] Support Search endpoint
 - [x] Support Artists endpoints
-- [ ] Support Browse endpoints
+- [x] Support Browse endpoints
 - [ ] Support Follow endpoints
 - [ ] Support Library endpoints
 - [ ] Support Personalization endpoints
