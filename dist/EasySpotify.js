@@ -47,10 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = require("axios");
-var Album_1 = require("./models/Album");
-var Artist_1 = require("./models/Artist");
-var Track_1 = require("./models/Track");
-var Category_1 = require("./models/Category");
+var models_1 = require("./models");
 var EasySpotify = /** @class */ (function () {
     function EasySpotify(config) {
         this.config = config;
@@ -85,7 +82,7 @@ var EasySpotify = /** @class */ (function () {
                     case 1:
                         response = _a.sent();
                         if (response.data) {
-                            return [2 /*return*/, new Album_1.Album(response.data)];
+                            return [2 /*return*/, new models_1.Album(response.data)];
                         }
                         else {
                             throw new Error("Could not find any album with that id");
@@ -111,7 +108,7 @@ var EasySpotify = /** @class */ (function () {
                         response = _a.sent();
                         if (response.data.albums) {
                             albums = response.data.albums.map(function (album) {
-                                return new Album_1.Album(album);
+                                return new models_1.Album(album);
                             });
                             return [2 /*return*/, albums];
                         }
@@ -186,7 +183,7 @@ var EasySpotify = /** @class */ (function () {
                         response = _a.sent();
                         if (response.data.artists) {
                             artists = response.data.artists.map(function (artist) {
-                                return new Artist_1.Artist(artist);
+                                return new models_1.Artist(artist);
                             });
                             return [2 /*return*/, artists];
                         }
@@ -239,7 +236,7 @@ var EasySpotify = /** @class */ (function () {
                         response = _a.sent();
                         if (response.data.tracks) {
                             tracks = response.data.tracks.map(function (track) {
-                                return new Track_1.Track(track);
+                                return new models_1.Track(track);
                             });
                             return [2 /*return*/, tracks];
                         }
@@ -267,7 +264,7 @@ var EasySpotify = /** @class */ (function () {
                         response = _a.sent();
                         if (response.data.artists) {
                             artists = response.data.artists.map(function (artist) {
-                                return new Artist_1.Artist(artist);
+                                return new models_1.Artist(artist);
                             });
                             return [2 /*return*/, artists];
                         }
@@ -405,7 +402,7 @@ var EasySpotify = /** @class */ (function () {
                     case 1:
                         response = _a.sent();
                         if (response.data) {
-                            return [2 /*return*/, new Category_1.Category(response.data)];
+                            return [2 /*return*/, new models_1.Category(response.data)];
                         }
                         else {
                             throw new Error("Could not find any category with that id");
@@ -562,17 +559,166 @@ var EasySpotify = /** @class */ (function () {
             });
         });
     };
+    EasySpotify.prototype.getPlaylists = function (userId, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var endpoint, response, err_20;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        endpoint = userId ? "users/" + userId + "/playlists" : "me/playlists";
+                        return [4 /*yield*/, this.buildRequest(endpoint, options)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_20 = _a.sent();
+                        throw err_20;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.createPlaylist = function (userId, params) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_21;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("users/" + userId + "/playlists", params, "post")];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_21 = _a.sent();
+                        throw err_21;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.updatePlaylistDetails = function (playlistId, params) {
+        return __awaiter(this, void 0, void 0, function () {
+            var err_22;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId, params, "put")];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_22 = _a.sent();
+                        throw err_22;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.replacePlaylistTracks = function (playlistId, uris) {
+        return __awaiter(this, void 0, void 0, function () {
+            var err_23;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/tracks", { uris: uris }, "put")];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_23 = _a.sent();
+                        throw err_23;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.unfollowPlaylist = function (playlistId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var err_24;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/followers", undefined, "delete")];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_24 = _a.sent();
+                        throw err_24;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EasySpotify.prototype.getUserProfile = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var endpoint, response, err_25;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        endpoint = userId ? "users/" + userId : "me";
+                        return [4 /*yield*/, this.buildRequest(endpoint)];
+                    case 1:
+                        response = _a.sent();
+                        if (response.data) {
+                            return [2 /*return*/, response.data];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_25 = _a.sent();
+                        throw err_25;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     EasySpotify.prototype.buildRequest = function (endpoint, params, method) {
+        var _this = this;
         if (method === void 0) { method = "get"; }
-        return this.httpClient({
-            headers: this.buildHeaders(),
-            method: method,
-            params: params,
-            url: this.getApiUrl() + "/" + endpoint,
+        return new Promise(function (resolve, reject) {
+            var _a;
+            try {
+                var paramsKey = ["put", "post", "patch"].some(function (m) { return m === method.toLowerCase(); }) ? "data" : "params";
+                _this.httpClient((_a = {
+                        headers: _this.buildHeaders(),
+                        method: method
+                    },
+                    _a[paramsKey] = params,
+                    _a.url = _this.getApiUrl() + "/" + endpoint,
+                    _a)).then(resolve, function (e) {
+                    var retryAfter = e.response && e.response.headers["retry-after"];
+                    if (retryAfter) {
+                        setTimeout(function () {
+                            _this.buildRequest(endpoint, params, method).then(resolve, reject);
+                        }, (retryAfter + 1) * 1000);
+                    }
+                    else {
+                        reject(e);
+                    }
+                });
+            }
+            catch (e) {
+                reject(e);
+            }
         });
     };
     EasySpotify.prototype.buildHeaders = function () {
-        return { Authorization: "Bearer " + this.config.token };
+        return {
+            "Authorization": "Bearer " + this.config.token,
+            "Content-Type": "application/json",
+        };
     };
     return EasySpotify;
 }());

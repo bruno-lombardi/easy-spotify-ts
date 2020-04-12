@@ -1,7 +1,7 @@
 import { ExternalUrls } from "./ExternalUrls";
 import { Image } from "./Image";
-import { User } from "./User";
 import { PagingPlaylists } from "./Paging";
+import { User } from "./User";
 export interface FeaturedPlaylists {
     message: string;
     playlists: PagingPlaylists;
@@ -18,8 +18,9 @@ export interface SimplifiedPlaylist {
     public: any;
     snapshot_id: string;
     tracks: Tracks;
-    type: string;
+    type: "playlist";
     uri: string;
+    description: string;
 }
 interface Tracks {
     href: string;

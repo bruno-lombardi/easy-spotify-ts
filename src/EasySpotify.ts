@@ -1,21 +1,34 @@
 import axios, {
   AxiosInstance,
-  AxiosPromise,
   AxiosRequestConfig,
   AxiosResponse,
 } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
-import { Album, SimplifiedAlbum, FeaturedAlbums } from "./models/Album";
-import { Artist } from "./models/Artist";
-import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch, PagingCategories } from "./models/Paging";
-import { Track } from "./models/Track";
-import { Category } from './models/Category';
-import { FeaturedPlaylists } from "./models/Playlist";
-import { RecommendationsQuery, Recommendations } from "./models/Recomendations";
+import {
+  Album,
+  Artist,
+  Category,
+  FeaturedAlbums,
+  FeaturedPlaylists,
+  PagingAlbums,
+  PagingArtists,
+  PagingCategories,
+  PagingPlaylists,
+  PagingSearch,
+  PagingTracks,
+  Recommendations,
+  RecommendationsQuery,
+  SimplifiedPlaylist,
+  Track,
+  User,
+} from "./models";
 
-export interface OptionalRequestParams {
+export interface PagingRequestParams {
   limit?: number;
   offset?: number;
+}
+
+export interface OptionalRequestParams extends PagingRequestParams {
   market?: string;
 }
 
@@ -30,6 +43,20 @@ export interface GetAlbumOptions {
 
 export interface GetArtistAlbumsOptions extends OptionalRequestParams {
   include_groups?: string;
+}
+
+export interface CreatePlaylistParams {
+  name: string;
+  public?: boolean;
+  collaborative?: boolean;
+  description?: string;
+}
+
+export interface UpdatePlaylistParams {
+  name?: string;
+  public?: boolean;
+  collaborative?: boolean;
+  description?: string;
 }
 
 export default class EasySpotify {
@@ -281,7 +308,7 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseCategoryPlaylists(id: string, options: { country?: string, limit?: number, offset?: number }): Promise<PagingPlaylists> {
+  public async getBrowseCategoryPlaylists(id: string, options: { country?: string } & PagingRequestParams): Promise<PagingPlaylists> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(
         `browse/categories/${id}/playlists`,
@@ -297,7 +324,7 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseListOfCategories(options: {locale?: string, country?: string, offset?: number, limit?: number}): Promise<PagingCategories> {
+  public async getBrowseListOfCategories(options: {locale?: string, country?: string } & PagingRequestParams): Promise<PagingCategories> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(
         `browse/categories`,
@@ -313,7 +340,7 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseFeaturedPlaylists(options: {locale?: string, country?: string, timestamp?: Date, limit?: number, offset?: number}): Promise<FeaturedPlaylists> {
+  public async getBrowseFeaturedPlaylists(options: {locale?: string, country?: string, timestamp?: Date } & PagingRequestParams): Promise<FeaturedPlaylists> {
     try {
       if (options.timestamp) {
         Object.assign(options, {timestamp: options.timestamp.toISOString()});
@@ -332,7 +359,7 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseNewReleases(options: {country?: string, limit?: number, offset?: number}): Promise<FeaturedAlbums> {
+  public async getBrowseNewReleases(options: {country?: string } & PagingRequestParams): Promise<FeaturedAlbums> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(
         `browse/new-releases`,
@@ -380,20 +407,99 @@ export default class EasySpotify {
 
   }
 
+  public async getPlaylists(userId?: string, options?: PagingRequestParams): Promise<PagingPlaylists> {
+    try {
+      const endpoint = userId ? `users/${userId}/playlists` : "me/playlists";
+      const response: AxiosResponse<any> = await this.buildRequest(endpoint, options);
+      if (response.data) {
+        return response.data;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async createPlaylist(userId: string, params: CreatePlaylistParams): Promise<SimplifiedPlaylist> {
+    try {
+      const response: AxiosResponse<any> = await this.buildRequest(`users/${userId}/playlists`, params, "post");
+      if (response.data) {
+        return response.data;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async updatePlaylistDetails(playlistId: string, params: UpdatePlaylistParams): Promise<void> {
+    try {
+      await this.buildRequest(`playlists/${playlistId}`, params, "put");
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void> {
+    try {
+      await this.buildRequest(`playlists/${playlistId}/tracks`, {uris}, "put");
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async unfollowPlaylist(playlistId: string): Promise<void> {
+    try {
+      await this.buildRequest(`playlists/${playlistId}/followers`, undefined, "delete");
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getUserProfile(userId?: string): Promise<User> {
+    try {
+      const endpoint = userId ? `users/${userId}` : "me";
+      const response: AxiosResponse<any> = await this.buildRequest(endpoint);
+      if (response.data) {
+        return response.data;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
   public buildRequest(
     endpoint: string,
     params?: AxiosRequestConfig["params"],
     method: string = "get",
-  ): AxiosPromise<any> {
-    return this.httpClient({
-      headers: this.buildHeaders(),
-      method,
-      params,
-      url: `${this.getApiUrl()}/${endpoint}`,
+  ): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      try {
+        const paramsKey = ["put", "post", "patch"].some((m) => m === method.toLowerCase()) ? "data" : "params";
+
+        this.httpClient({
+          headers: this.buildHeaders(),
+          method,
+          [paramsKey]: params,
+          url: `${this.getApiUrl()}/${endpoint}`,
+        }).then(resolve, (e) => {
+          const retryAfter = e.response && e.response.headers["retry-after"];
+          if (retryAfter) {
+            setTimeout(() => {
+              this.buildRequest(endpoint, params, method).then(resolve, reject);
+            }, (retryAfter + 1) * 1000);
+          } else {
+            reject(e);
+          }
+        });
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
   private buildHeaders(): any {
-    return { Authorization: `Bearer ${this.config.token}` };
+    return {
+      "Authorization": `Bearer ${this.config.token}`,
+      "Content-Type": "application/json",
+    };
   }
 }
