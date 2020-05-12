@@ -1,15 +1,11 @@
-import { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 import EasySpotifyConfig from "./EasySpotifyConfig";
-import { Album, FeaturedAlbums } from "./models/Album";
-import { Artist } from "./models/Artist";
-import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch, PagingCategories } from "./models/Paging";
-import { Track } from "./models/Track";
-import { Category } from './models/Category';
-import { FeaturedPlaylists } from "./models/Playlist";
-import { RecommendationsQuery, Recommendations } from "./models/Recomendations";
-export interface OptionalRequestParams {
+import { Album, Artist, Category, FeaturedAlbums, FeaturedPlaylists, PagingAlbums, PagingArtists, PagingCategories, PagingPlaylists, PagingSearch, PagingTracks, Recommendations, RecommendationsQuery, SimplifiedPlaylist, Track, User } from "./models";
+export interface PagingRequestParams {
     limit?: number;
     offset?: number;
+}
+export interface OptionalRequestParams extends PagingRequestParams {
     market?: string;
 }
 export interface SearchRequestParams extends OptionalRequestParams {
@@ -21,6 +17,18 @@ export interface GetAlbumOptions {
 }
 export interface GetArtistAlbumsOptions extends OptionalRequestParams {
     include_groups?: string;
+}
+export interface CreatePlaylistParams {
+    name: string;
+    public?: boolean;
+    collaborative?: boolean;
+    description?: string;
+}
+export interface UpdatePlaylistParams {
+    name?: string;
+    public?: boolean;
+    collaborative?: boolean;
+    description?: string;
 }
 export default class EasySpotify {
     config: EasySpotifyConfig;
@@ -49,28 +57,26 @@ export default class EasySpotify {
     }): Promise<Category>;
     getBrowseCategoryPlaylists(id: string, options: {
         country?: string;
-        limit?: number;
-        offset?: number;
-    }): Promise<PagingPlaylists>;
+    } & PagingRequestParams): Promise<PagingPlaylists>;
     getBrowseListOfCategories(options: {
         locale?: string;
         country?: string;
-        offset?: number;
-        limit?: number;
-    }): Promise<PagingCategories>;
+    } & PagingRequestParams): Promise<PagingCategories>;
     getBrowseFeaturedPlaylists(options: {
         locale?: string;
         country?: string;
         timestamp?: Date;
-        limit?: number;
-        offset?: number;
-    }): Promise<FeaturedPlaylists>;
+    } & PagingRequestParams): Promise<FeaturedPlaylists>;
     getBrowseNewReleases(options: {
         country?: string;
-        limit?: number;
-        offset?: number;
-    }): Promise<FeaturedAlbums>;
+    } & PagingRequestParams): Promise<FeaturedAlbums>;
     getBrowseRecommendations(query: RecommendationsQuery): Promise<Recommendations>;
-    buildRequest(endpoint: string, params?: AxiosRequestConfig["params"], method?: string): AxiosPromise<any>;
+    getPlaylists(userId?: string, options?: PagingRequestParams): Promise<PagingPlaylists>;
+    createPlaylist(userId: string, params: CreatePlaylistParams): Promise<SimplifiedPlaylist>;
+    updatePlaylistDetails(playlistId: string, params: UpdatePlaylistParams): Promise<void>;
+    replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void>;
+    unfollowPlaylist(playlistId: string): Promise<void>;
+    getUserProfile(userId?: string): Promise<User>;
+    buildRequest(endpoint: string, params?: AxiosRequestConfig["params"], method?: string): Promise<any>;
     private buildHeaders;
 }
