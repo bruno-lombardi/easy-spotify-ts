@@ -698,7 +698,7 @@ var EasySpotify = /** @class */ (function () {
                     _a[paramsKey] = params,
                     _a.url = _this.getApiUrl() + "/" + endpoint,
                     _a)).then(resolve, function (e) {
-                    var retryAfter = e.response && e.response.headers["retry-after"];
+                    var retryAfter = (e.response && e.response.headers) && e.response.headers["retry-after"];
                     if (retryAfter) {
                         setTimeout(function () {
                             _this.buildRequest(endpoint, params, method).then(resolve, reject);
