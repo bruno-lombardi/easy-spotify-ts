@@ -16,7 +16,7 @@ import { FeaturedPlaylists } from "../src/models/Playlist";
 
 const params: any = undefined;
 const baseHttpClientConfig = {
-  headers: { Authorization: "Bearer token" },
+  headers: { Authorization: "Bearer token", "Content-Type": "application/json", },
   method: "get",
   params,
 };

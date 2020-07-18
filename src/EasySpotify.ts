@@ -324,7 +324,7 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseListOfCategories(options: {locale?: string, country?: string } & PagingRequestParams): Promise<PagingCategories> {
+  public async getBrowseListOfCategories(options: { locale?: string, country?: string } & PagingRequestParams): Promise<PagingCategories> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(
         `browse/categories`,
@@ -340,10 +340,10 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseFeaturedPlaylists(options: {locale?: string, country?: string, timestamp?: Date } & PagingRequestParams): Promise<FeaturedPlaylists> {
+  public async getBrowseFeaturedPlaylists(options: { locale?: string, country?: string, timestamp?: Date } & PagingRequestParams): Promise<FeaturedPlaylists> {
     try {
       if (options.timestamp) {
-        Object.assign(options, {timestamp: options.timestamp.toISOString()});
+        Object.assign(options, { timestamp: options.timestamp.toISOString() });
       }
       const response: AxiosResponse<any> = await this.buildRequest(
         `browse/featured-playlists`,
@@ -359,7 +359,7 @@ export default class EasySpotify {
     }
   }
 
-  public async getBrowseNewReleases(options: {country?: string } & PagingRequestParams): Promise<FeaturedAlbums> {
+  public async getBrowseNewReleases(options: { country?: string } & PagingRequestParams): Promise<FeaturedAlbums> {
     try {
       const response: AxiosResponse<any> = await this.buildRequest(
         `browse/new-releases`,
@@ -440,7 +440,7 @@ export default class EasySpotify {
 
   public async replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void> {
     try {
-      await this.buildRequest(`playlists/${playlistId}/tracks`, {uris}, "put");
+      await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, "put");
     } catch (err) {
       throw err;
     }
@@ -481,7 +481,7 @@ export default class EasySpotify {
           [paramsKey]: params,
           url: `${this.getApiUrl()}/${endpoint}`,
         }).then(resolve, (e) => {
-          const retryAfter = e.response && e.response.headers["retry-after"];
+          const retryAfter = (e.response && e.response.headers) && e.response.headers["retry-after"];
           if (retryAfter) {
             setTimeout(() => {
               this.buildRequest(endpoint, params, method).then(resolve, reject);
