@@ -438,6 +438,14 @@ export default class EasySpotify {
     }
   }
 
+  public async addPlaylistTracks(playlistId: string, uris: string[]): Promise<void> {
+    try {
+      await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, "post");
+    } catch (err) {
+      throw err;
+    }
+  }
+
   public async replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void> {
     try {
       await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, "put");
