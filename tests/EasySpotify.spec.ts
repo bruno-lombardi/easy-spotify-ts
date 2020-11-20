@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { expect, use } from "chai";
 import "mocha";
 import { SinonStub, stub } from "sinon";
@@ -7,18 +6,16 @@ use(sinonChai);
 
 import EasySpotify from "../src/EasySpotify";
 import EasySpotifyConfig from "../src/EasySpotifyConfig";
-import { Album, SimplifiedAlbum, FeaturedAlbums } from "../src/models/Album";
-import { Artist } from "../src/models/Artist";
-import { PagingAlbums, PagingArtists, PagingPlaylists, PagingTracks, PagingSearch, PagingCategories } from "../src/models/Paging";
-import { Track } from "../src/models/Track";
-import { Category } from "../src/models/Category";
-import { FeaturedPlaylists } from "../src/models/Playlist";
+import { Album, FeaturedAlbums } from "../src/models";
+import { Artist } from "../src/models";
+import { Category } from "../src/models";
+import { PagingAlbums, PagingArtists, PagingCategories, PagingPlaylists, PagingSearch, PagingTracks } from "../src/models";
+import { FeaturedPlaylists } from "../src/models";
+import { Track } from "../src/models";
 
-const params: any = undefined;
 const baseHttpClientConfig = {
-  headers: { Authorization: "Bearer token", "Content-Type": "application/json", },
+  headers: { "Authorization": "Bearer token", "Content-Type": "application/json" },
   method: "get",
-  params,
 };
 
 describe("EasySpotify", () => {
@@ -55,6 +52,15 @@ describe("EasySpotify", () => {
     expect(spotify.getBrowseListOfCategories).to.exist;
     expect(spotify.getBrowseFeaturedPlaylists).to.exist;
     expect(spotify.getBrowseNewReleases).to.exist;
+
+    expect(spotify.getPlaylists).to.exist;
+    expect(spotify.createPlaylist).to.exist;
+    expect(spotify.updatePlaylistDetails).to.exist;
+    expect(spotify.addPlaylistTracks).to.exist;
+    expect(spotify.replacePlaylistTracks).to.exist;
+    expect(spotify.unfollowPlaylist).to.exist;
+
+    expect(spotify.getUserProfile).to.exist;
   });
 
   it("should create an instance of EasySpotify", () => {
@@ -77,7 +83,7 @@ describe("EasySpotify", () => {
   });
 
   it("should correctly set the Api Url", () => {
-    // TODO: Add validation to check it's a valid URL
+    // TODO: Add validation to check it"s a valid URL
     spotify.setApiUrl("new apiURL");
     expect(spotify.getApiUrl()).to.eq("new apiURL");
   });
@@ -136,7 +142,7 @@ describe("EasySpotify", () => {
               { id: "6JWc4iAiJ9FjyK0B59ABb4", name: "Rock is Good" },
               { id: "6UXCm6bOO4gFlDQZV5yL37", name: "Just a Fake Name" },
             ],
-          }
+          },
         });
       });
 
@@ -186,7 +192,7 @@ describe("EasySpotify", () => {
               { id: "6JWc4iAiJ9FjyK0B59ABb4", name: "Rock is Good" },
               { id: "6UXCm6bOO4gFlDQZV5yL37", name: "Just a Fake Name" },
             ],
-          }
+          },
         });
       });
 
@@ -231,7 +237,7 @@ describe("EasySpotify", () => {
             id: "0OdUWJ0sBjDrqHygGUXeCF",
             name: "Band of Horses",
             popularity: 100,
-          }
+          },
         });
       });
 
@@ -244,6 +250,7 @@ describe("EasySpotify", () => {
         const artist = await spotify.getArtist("0OdUWJ0sBjDrqHygGUXeCF");
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
+          params: undefined,
           url: "https://api.spotify.com/v1/artists/0OdUWJ0sBjDrqHygGUXeCF",
         });
       });
@@ -285,7 +292,7 @@ describe("EasySpotify", () => {
               name: "David Bowie",
               popularity: 82,
             }],
-          }
+          },
         });
       });
 
@@ -334,7 +341,7 @@ describe("EasySpotify", () => {
               { id: "43977e0YlJeMXG77uCCSMX", name: "Shut Up Lets Dance (Vol. II)", album_group: "appears_on" },
               { id: "189ngoT3WxR5mZSYkAGOLF", name: "Classic Club Monsters", album_group: "appears_on" },
             ],
-          }
+          },
         });
       });
 
@@ -376,16 +383,16 @@ describe("EasySpotify", () => {
             tracks: [
               {
                 id: "44AyOl4qVkzS48vBsbNXaC",
-                name: "Can't Help Falling in Love",
+                name: "Can\'t Help Falling in Love",
                 uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
               },
               {
                 id: "44AyOl4qVkzS48vBsbNXaC",
-                name: "Can't Help Falling in Love",
+                name: "Can\'t Help Falling in Love",
                 uri: "spotify:track:44AyOl4qVkzS48vBsbNXaC",
               },
             ],
-          }
+          },
         });
       });
 
@@ -439,7 +446,7 @@ describe("EasySpotify", () => {
                 id: "5ZKMPRDHc7qElVJFh3uRqB",
               },
             ],
-          }
+          },
         });
       });
 
@@ -447,6 +454,7 @@ describe("EasySpotify", () => {
         const artists: Artist[] = await spotify.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG9PnE");
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
+          params: undefined,
           url: "https://api.spotify.com/v1/artists/43ZHCT0cAZBISjO8DG9PnE/related-artists",
         });
       });
@@ -476,7 +484,7 @@ describe("EasySpotify", () => {
               ],
               total: 40000,
             },
-          }
+          },
         });
       });
 
@@ -516,7 +524,7 @@ describe("EasySpotify", () => {
               offset: 2,
               total: 4442,
             },
-          }
+          },
         });
       });
 
@@ -556,7 +564,7 @@ describe("EasySpotify", () => {
               offset: 0,
               total: 21654,
             },
-          }
+          },
         });
       });
 
@@ -596,7 +604,7 @@ describe("EasySpotify", () => {
               offset: 0,
               total: 21654,
             },
-          }
+          },
         });
       });
 
@@ -628,8 +636,8 @@ describe("EasySpotify", () => {
                   id: "37i9dQZF1DX50QitC6Oqtn",
                   name: "Love Pop",
                 },
-              ], total: 1
-            }
+              ], total: 1,
+            },
           },
         });
       });
@@ -653,7 +661,7 @@ describe("EasySpotify", () => {
 
     });
 
-    describe('getBrowseCategory', () => {
+    describe("getBrowseCategory", () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -661,10 +669,10 @@ describe("EasySpotify", () => {
             icons: [{
               height: 274,
               url: "https://datsnxq1rwndn.cloudfront.net/media/derived/party-274x274_73d1907a7371c3bb96a288390a96ee27_0_0_274_274.jpg",
-              width: 274
+              width: 274,
             }],
             id: "party",
-            name: "Party"
+            name: "Party",
           },
         });
       });
@@ -689,7 +697,7 @@ describe("EasySpotify", () => {
 
     });
 
-    describe('getBrowseCategoryPlaylists', () => {
+    describe("getBrowseCategoryPlaylists", () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -708,7 +716,7 @@ describe("EasySpotify", () => {
               offset: 0,
               total: 21654,
             },
-          }
+          },
         });
       });
 
@@ -721,16 +729,16 @@ describe("EasySpotify", () => {
         });
       });
 
-      it('should get response with playlists', async () => {
+      it("should get response with playlists", async () => {
         const playlists: PagingPlaylists = await spotify.getBrowseCategoryPlaylists("party", { country: "BR", limit: 20 });
         expect(playlists.items).to.exist;
         expect(playlists.items).to.not.be.empty;
         expect(playlists.limit).to.eq(20);
         expect(playlists.total).to.exist;
-      })
+      });
     });
 
-    describe('getBrowseListOfCategories', () => {
+    describe("getBrowseListOfCategories", () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -738,20 +746,20 @@ describe("EasySpotify", () => {
               href: "https://api.spotify.com/v1/browse/categories?offset=0&limit=20",
               items: [{
                 id: "toplists",
-                name: "Top Lists"
+                name: "Top Lists",
               }, {
                 id: "mood",
-                name: "Mood"
+                name: "Mood",
               }],
               limit: 10,
               offset: 0,
               total: 31,
-            }
-          }
+            },
+          },
         });
       });
 
-      it('should call httpClient with correct settings', async () => {
+      it("should call httpClient with correct settings", async () => {
         const categories: PagingCategories = await spotify.getBrowseListOfCategories({ offset: 0, limit: 10 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
@@ -760,7 +768,7 @@ describe("EasySpotify", () => {
         });
       });
 
-      it('should get list of categories', async () => {
+      it("should get list of categories", async () => {
         const categories: PagingCategories = await spotify.getBrowseListOfCategories({ offset: 0, limit: 10 });
         expect(categories.items).to.exist;
         expect(categories.items).to.not.be.empty;
@@ -769,7 +777,7 @@ describe("EasySpotify", () => {
       });
     });
 
-    describe('getBrowseFeaturedPlaylists', () => {
+    describe("getBrowseFeaturedPlaylists", () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -785,17 +793,17 @@ describe("EasySpotify", () => {
                   description: "Du kommer studsa ur sängen med den här spellistan.",
                   id: "4uOEx4OUrkoGNZoIlWMUbO",
                   name: "Upp och hoppa!",
-                }
+                },
               ],
               limit: 5,
               offset: 1,
               total: 20,
-            }
-          }
+            },
+          },
         });
       });
 
-      it('should call httpClient with correct settings', async () => {
+      it("should call httpClient with correct settings", async () => {
         const featured: FeaturedPlaylists = await spotify.getBrowseFeaturedPlaylists({ offset: 0, limit: 10, timestamp: new Date("2020-01-01") });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
@@ -804,7 +812,7 @@ describe("EasySpotify", () => {
         });
       });
 
-      it('should get featured playlists', async () => {
+      it("should get featured playlists", async () => {
         const featured: FeaturedPlaylists = await spotify.getBrowseFeaturedPlaylists({ offset: 0, limit: 10, timestamp: new Date("2020-01-01") });
         expect(featured.message).to.exist;
         expect(featured.playlists.items).to.not.be.empty;
@@ -813,7 +821,7 @@ describe("EasySpotify", () => {
       });
     });
 
-    describe('getBrowseNewReleases', () => {
+    describe("getBrowseNewReleases", () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -829,12 +837,12 @@ describe("EasySpotify", () => {
               limit: 10,
               offset: 0,
               total: 300,
-            }
-          }
+            },
+          },
         });
       });
 
-      it('should call httpClient with correct settings', async () => {
+      it("should call httpClient with correct settings", async () => {
         const featured: FeaturedAlbums = await spotify.getBrowseNewReleases({ offset: 0, limit: 10 });
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
@@ -843,7 +851,7 @@ describe("EasySpotify", () => {
         });
       });
 
-      it('should get albums', async () => {
+      it("should get albums", async () => {
         const featured: FeaturedAlbums = await spotify.getBrowseNewReleases({ offset: 0, limit: 10 });
         expect(featured.message).to.exist;
         expect(featured.albums.items).to.not.be.empty;
@@ -852,14 +860,14 @@ describe("EasySpotify", () => {
       });
     });
 
-    describe('getBrowseRecommendations', () => {
+    describe("getBrowseRecommendations", () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
             tracks: [{
               id: "1TKYPzH66GwsqyJFKFkBHQ",
               is_playable: true,
-              name: "Music Is Life"
+              name: "Music Is Life",
             }, {
               id: "15iosIuxC3C53BgsM5Uggs",
               is_playable: true,
@@ -870,12 +878,12 @@ describe("EasySpotify", () => {
               afterFilteringSize: 380,
               afterRelinkingSize: 365,
               id: "4NHQUGzhtTLFvgF5SZesLK",
-            }]
-          }
+            }],
+          },
         });
       });
 
-      it('should call httpClient with correct settings', async () => {
+      it("should call httpClient with correct settings", async () => {
         const recommendations = await spotify.getBrowseRecommendations({
           seed_tracks: ["4NHQUGzhtTLFvgF5SZesLK", "1VBflYyxBhnDc9uVib98rw"],
           target_loudness: 0.2,
@@ -887,7 +895,7 @@ describe("EasySpotify", () => {
         });
       });
 
-      it('should get recomendations', async () => {
+      it("should get recomendations", async () => {
         const recommendations = await spotify.getBrowseRecommendations({
           seed_tracks: ["4NHQUGzhtTLFvgF5SZesLK", "1VBflYyxBhnDc9uVib98rw"],
           target_loudness: 0.2,
@@ -896,6 +904,297 @@ describe("EasySpotify", () => {
         expect(recommendations.tracks).to.not.be.empty;
         expect(recommendations.tracks.length).to.eq(2);
       });
-    })
+    });
+
+    describe("getPlaylists", () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            href: "https://api.spotify.com/v1/users/wizzler/playlists",
+            items: [
+              {
+                collaborative: false,
+                external_urls: {
+                  spotify: "http://open.spotify.com/user/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c",
+                },
+                href: "https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c",
+                id: "53Y8wT46QIMz5H4WQ8O22c",
+                images: [],
+                name: "Wizzlers Big Playlist",
+                owner: {
+                  external_urls: {
+                    spotify: "http://open.spotify.com/user/wizzler",
+                  },
+                  href: "https://api.spotify.com/v1/users/wizzler",
+                  id: "wizzler",
+                  type: "user",
+                  uri: "spotify:user:wizzler",
+                },
+                public: true,
+                snapshot_id: "bNLWdmhh+HDsbHzhckXeDC0uyKyg4FjPI/KEsKjAE526usnz2LxwgyBoMShVL+z+",
+                tracks: {
+                  href: "https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c/tracks",
+                  total: 30,
+                },
+                type: "playlist",
+                uri: "spotify:user:wizzler:playlist:53Y8wT46QIMz5H4WQ8O22c",
+              },
+              {
+                collaborative: false,
+                external_urls: {
+                  spotify: "http://open.spotify.com/user/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju",
+                },
+                href: "https://api.spotify.com/v1/users/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju",
+                id: "1AVZz0mBuGbCEoNRQdYQju",
+                images: [],
+                name: "Another Playlist",
+                owner: {
+                  external_urls: {
+                    spotify: "http://open.spotify.com/user/wizzlersmate",
+                  },
+                  href: "https://api.spotify.com/v1/users/wizzlersmate",
+                  id: "wizzlersmate",
+                  type: "user",
+                  uri: "spotify:user:wizzlersmate",
+                },
+                public: true,
+                snapshot_id: "Y0qg/IT5T02DKpw4uQKc/9RUrqQJ07hbTKyEeDRPOo9LU0g0icBrIXwVkHfQZ/aD",
+                tracks: {
+                  href: "https://api.spotify.com/v1/users/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju/tracks",
+                  total: 58,
+                },
+                type: "playlist",
+                uri: "spotify:user:wizzlersmate:playlist:1AVZz0mBuGbCEoNRQdYQju",
+              },
+            ],
+            limit: 9,
+            next: null,
+            offset: 0,
+            previous: null,
+            total: 9,
+          },
+        });
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        const playlists = await spotify.getPlaylists("wizzlersmate", {
+          limit: 9,
+          offset: 0,
+        });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { limit: 9, offset: 0 },
+          url: "https://api.spotify.com/v1/users/wizzlersmate/playlists",
+        });
+      });
+
+      it("should get playlists", async () => {
+        const playlists = await spotify.getPlaylists("wizzlersmate", {
+          limit: 9,
+          offset: 0,
+        });
+        expect(playlists).to.not.be.empty;
+        expect(playlists.items).to.eql([
+          {
+            collaborative: false,
+            external_urls: {
+              spotify: "http://open.spotify.com/user/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c",
+            },
+            href: "https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c",
+            id: "53Y8wT46QIMz5H4WQ8O22c",
+            images: [],
+            name: "Wizzlers Big Playlist",
+            owner: {
+              external_urls: {
+                spotify: "http://open.spotify.com/user/wizzler",
+              },
+              href: "https://api.spotify.com/v1/users/wizzler",
+              id: "wizzler",
+              type: "user",
+              uri: "spotify:user:wizzler",
+            },
+            public: true,
+            snapshot_id: "bNLWdmhh+HDsbHzhckXeDC0uyKyg4FjPI/KEsKjAE526usnz2LxwgyBoMShVL+z+",
+            tracks: {
+              href: "https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c/tracks",
+              total: 30,
+            },
+            type: "playlist",
+            uri: "spotify:user:wizzler:playlist:53Y8wT46QIMz5H4WQ8O22c",
+          },
+          {
+            collaborative: false,
+            external_urls: {
+              spotify: "http://open.spotify.com/user/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju",
+            },
+            href: "https://api.spotify.com/v1/users/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju",
+            id: "1AVZz0mBuGbCEoNRQdYQju",
+            images: [],
+            name: "Another Playlist",
+            owner: {
+              external_urls: {
+                spotify: "http://open.spotify.com/user/wizzlersmate",
+              },
+              href: "https://api.spotify.com/v1/users/wizzlersmate",
+              id: "wizzlersmate",
+              type: "user",
+              uri: "spotify:user:wizzlersmate",
+            },
+            public: true,
+            snapshot_id: "Y0qg/IT5T02DKpw4uQKc/9RUrqQJ07hbTKyEeDRPOo9LU0g0icBrIXwVkHfQZ/aD",
+            tracks: {
+              href: "https://api.spotify.com/v1/users/wizzlersmate/playlists/1AVZz0mBuGbCEoNRQdYQju/tracks",
+              total: 58,
+            },
+            type: "playlist",
+            uri: "spotify:user:wizzlersmate:playlist:1AVZz0mBuGbCEoNRQdYQju",
+          },
+        ]);
+        expect(playlists.limit).to.eq(9);
+        expect(playlists.offset).to.eq(0);
+        expect(playlists.total).to.eq(9);
+      });
+    });
+
+    describe("createPlaylist", () => {
+      beforeEach(() => {
+        httpClientStub.resolves({data: "response"});
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        const playlist = await spotify.createPlaylist("wizzlersmate", {
+          name: "Playlist",
+          description: "Desc",
+          collaborative: false,
+          public: true,
+        });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          method: "post",
+          data: { collaborative: false, description: "Desc", name: "Playlist", public: true },
+          url: "https://api.spotify.com/v1/users/wizzlersmate/playlists",
+        });
+      });
+
+      it("should create playlist", async () => {
+        const playlist = await spotify.createPlaylist("wizzlersmate", {
+          name: "Playlist",
+          description: "Desc",
+          collaborative: false,
+          public: true,
+        });
+        expect(playlist).to.eql("response");
+      });
+    });
+
+    describe("updatePlaylistDetails", () => {
+      beforeEach(() => {
+        httpClientStub.resolves();
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        await spotify.updatePlaylistDetails("playlistid", {
+          name: "New Playlist",
+          description: "New Desc",
+          collaborative: true,
+          public: false,
+        });
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          method: "put",
+          data: { collaborative: true, description: "New Desc", name: "New Playlist", public: false },
+          url: "https://api.spotify.com/v1/playlists/playlistid",
+        });
+      });
+    });
+
+    describe("addPlaylistTracks", () => {
+      beforeEach(() => {
+        httpClientStub.resolves();
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        await spotify.addPlaylistTracks("playlistid", ["uri1", "url2"]);
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          method: "post",
+          data: { uris: ["uri1", "url2"] },
+          url: "https://api.spotify.com/v1/playlists/playlistid/tracks",
+        });
+      });
+    });
+
+    describe("replacePlaylistTracks", () => {
+      beforeEach(() => {
+        httpClientStub.resolves();
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        await spotify.replacePlaylistTracks("playlistid", ["uri1", "url2"]);
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          method: "put",
+          data: { uris: ["uri1", "url2"] },
+          url: "https://api.spotify.com/v1/playlists/playlistid/tracks",
+        });
+      });
+    });
+
+    describe("unfollowPlaylist", () => {
+      beforeEach(() => {
+        httpClientStub.resolves();
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        await spotify.unfollowPlaylist("playlistid");
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          method: "delete",
+          params: undefined,
+          url: "https://api.spotify.com/v1/playlists/playlistid/followers",
+        });
+      });
+    });
+
+    describe("getUserProfile", () => {
+      beforeEach(() => {
+        httpClientStub.resolves({
+          data: {
+            country: "SE",
+            display_name: "JM Wizzler",
+            email: "email@example.com",
+            external_urls: {
+              spotify: "https://open.spotify.com/user/wizzler",
+            },
+            followers: {
+              href: null,
+              total: 3829,
+            },
+            href: "https://api.spotify.com/v1/users/wizzler",
+            id: "wizzler",
+            images: [
+              {
+                height: null,
+                url: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc3/t1.0-1/1970403_10152215092574354_1798272330_n.jpg",
+                width: null,
+              },
+            ],
+            product: "premium",
+            type: "user",
+            uri: "spotify:user:wizzler",
+          },
+        });
+      });
+
+      it("should call httpClient with correct settings", async () => {
+        await spotify.getUserProfile("wizzler");
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          method: "get",
+          params: undefined,
+          url: "https://api.spotify.com/v1/users/wizzler",
+        });
+      });
+    });
   });
 });
