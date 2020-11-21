@@ -74,6 +74,7 @@ export default class EasySpotify {
     getPlaylists(userId?: string, options?: PagingRequestParams): Promise<PagingPlaylists>;
     createPlaylist(userId: string, params: CreatePlaylistParams): Promise<SimplifiedPlaylist>;
     updatePlaylistDetails(playlistId: string, params: UpdatePlaylistParams): Promise<void>;
+    addPlaylistTracks(playlistId: string, uris: string[]): Promise<void>;
     replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void>;
     unfollowPlaylist(playlistId: string): Promise<void>;
     getUserProfile(userId?: string): Promise<User>;

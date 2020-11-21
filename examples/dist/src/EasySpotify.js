@@ -623,14 +623,14 @@ var EasySpotify = /** @class */ (function () {
             });
         });
     };
-    EasySpotify.prototype.replacePlaylistTracks = function (playlistId, uris) {
+    EasySpotify.prototype.addPlaylistTracks = function (playlistId, uris) {
         return __awaiter(this, void 0, void 0, function () {
             var err_23;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/tracks", { uris: uris }, "put")];
+                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/tracks", { uris: uris }, "post")];
                     case 1:
                         _a.sent();
                         return [3 /*break*/, 3];
@@ -642,14 +642,14 @@ var EasySpotify = /** @class */ (function () {
             });
         });
     };
-    EasySpotify.prototype.unfollowPlaylist = function (playlistId) {
+    EasySpotify.prototype.replacePlaylistTracks = function (playlistId, uris) {
         return __awaiter(this, void 0, void 0, function () {
             var err_24;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/followers", undefined, "delete")];
+                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/tracks", { uris: uris }, "put")];
                     case 1:
                         _a.sent();
                         return [3 /*break*/, 3];
@@ -661,9 +661,28 @@ var EasySpotify = /** @class */ (function () {
             });
         });
     };
+    EasySpotify.prototype.unfollowPlaylist = function (playlistId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var err_25;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.buildRequest("playlists/" + playlistId + "/followers", undefined, "delete")];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_25 = _a.sent();
+                        throw err_25;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     EasySpotify.prototype.getUserProfile = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
-            var endpoint, response, err_25;
+            var endpoint, response, err_26;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -677,8 +696,8 @@ var EasySpotify = /** @class */ (function () {
                         }
                         return [3 /*break*/, 3];
                     case 2:
-                        err_25 = _a.sent();
-                        throw err_25;
+                        err_26 = _a.sent();
+                        throw err_26;
                     case 3: return [2 /*return*/];
                 }
             });
@@ -698,7 +717,7 @@ var EasySpotify = /** @class */ (function () {
                     _a[paramsKey] = params,
                     _a.url = _this.getApiUrl() + "/" + endpoint,
                     _a)).then(resolve, function (e) {
-                    var retryAfter = e.response && e.response.headers["retry-after"];
+                    var retryAfter = (e.response && e.response.headers) && e.response.headers["retry-after"];
                     if (retryAfter) {
                         setTimeout(function () {
                             _this.buildRequest(endpoint, params, method).then(resolve, reject);
