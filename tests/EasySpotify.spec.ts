@@ -108,13 +108,8 @@ describe('EasySpotify', () => {
         httpClientStub.resolves({ data: { id, name: 'Cyndi Lauper' } })
       })
 
-      it('should call httpClient method', async () => {
-        const album: Album = await spotify.getAlbum(id)
-        expect(httpClientStub).to.have.been.calledOnce
-      })
-
       it('should call httpClient with correct config', async () => {
-        const album: Album = await spotify.getAlbum(id, { market: 'ES' })
+        await spotify.getAlbum(id, { market: 'ES' })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { market: 'ES' },
@@ -161,13 +156,8 @@ describe('EasySpotify', () => {
         })
       })
 
-      it('should call httpClient method', async () => {
-        const albums: Album[] = await spotify.getAlbums(ids)
-        expect(httpClientStub).to.have.been.calledOnce
-      })
-
       it('should call httpClient with correct config', async () => {
-        const albums: Album[] = await spotify.getAlbums(ids, { market: 'ES' })
+        await spotify.getAlbums(ids, { market: 'ES' })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           // tslint:disable-next-line:max-line-length
@@ -210,18 +200,11 @@ describe('EasySpotify', () => {
         })
       })
 
-      it('should call httpClient method', async () => {
-        const albumTracks: PagingTracks = await spotify.getAlbumTracks(
-          '4aawyAB9vmqN3uQ7FjRGTy'
-        )
-        expect(httpClientStub).to.have.been.calledOnce
-      })
-
       it('should call httpClient method with correct config', async () => {
-        const albumTracks: PagingTracks = await spotify.getAlbumTracks(
-          '4aawyAB9vmqN3uQ7FjRGTy',
-          { limit: 3, offset: 0 }
-        )
+        await spotify.getAlbumTracks('4aawyAB9vmqN3uQ7FjRGTy', {
+          limit: 3,
+          offset: 0
+        })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { limit: 3, offset: 0 },
@@ -263,13 +246,8 @@ describe('EasySpotify', () => {
         })
       })
 
-      it('should call httpClient method', async () => {
-        const artist = await spotify.getArtist('0OdUWJ0sBjDrqHygGUXeCF')
-        expect(httpClientStub).to.have.been.calledOnce
-      })
-
       it('should call httpClient method with correct config', async () => {
-        const artist = await spotify.getArtist('0OdUWJ0sBjDrqHygGUXeCF')
+        await spotify.getArtist('0OdUWJ0sBjDrqHygGUXeCF')
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: undefined,
@@ -326,13 +304,8 @@ describe('EasySpotify', () => {
         })
       })
 
-      it('should call httpClient method', async () => {
-        const artists: Artist[] = await spotify.getArtists(ids)
-        expect(httpClientStub).to.have.been.calledOnce
-      })
-
       it('should call httpClient with correct config', async () => {
-        const artists: Artist[] = await spotify.getArtists(ids)
+        await spotify.getArtists(ids)
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: {
@@ -354,7 +327,7 @@ describe('EasySpotify', () => {
         ids = ['invalid', 'id']
         httpClientStub.rejects({ response: { status: 400 } })
         try {
-          const artists: Artist[] = await spotify.getArtists(ids)
+          await spotify.getArtists(ids)
         } catch (err) {
           expect(err.response.status).to.eq(400)
         }
@@ -362,8 +335,6 @@ describe('EasySpotify', () => {
     })
 
     describe('getArtistAlbums', () => {
-      const id = '1vCWHaC5f2uS3yhpwWbIA6'
-
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -385,19 +356,13 @@ describe('EasySpotify', () => {
         })
       })
 
-      it('should call httpClient method', async () => {
-        const artistAlbums: PagingAlbums = await spotify.getArtistAlbums(
-          '4aawyAB9vmqN3uQ7FjRGTy',
-          { include_groups: 'appears_on', limit: 3, offset: 0, market: 'ES' }
-        )
-        expect(httpClientStub).to.have.been.calledOnce
-      })
-
       it('should call httpClient method with correct settings', async () => {
-        const artistAlbums: PagingAlbums = await spotify.getArtistAlbums(
-          '4aawyAB9vmqN3uQ7FjRGTy',
-          { include_groups: 'appears_on', limit: 3, offset: 0, market: 'ES' }
-        )
+        await spotify.getArtistAlbums('4aawyAB9vmqN3uQ7FjRGTy', {
+          include_groups: 'appears_on',
+          limit: 3,
+          offset: 0,
+          market: 'ES'
+        })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: {
@@ -423,8 +388,6 @@ describe('EasySpotify', () => {
     })
 
     describe('getArtistTopTracks', () => {
-      const id = '1vCWHaC5f2uS3yhpwWbIA6'
-
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
@@ -445,10 +408,9 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient method with correct settings', async () => {
-        const artistTopTracks: Track[] = await spotify.getArtistTopTracks(
-          '4aawyAB9vmqN3uQ7FjRGTy',
-          { market: 'ES' }
-        )
+        await spotify.getArtistTopTracks('4aawyAB9vmqN3uQ7FjRGTy', {
+          market: 'ES'
+        })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { market: 'ES' },
@@ -504,9 +466,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient method with correct settings', async () => {
-        const artists: Artist[] = await spotify.getArtistRelatedArtists(
-          '43ZHCT0cAZBISjO8DG9PnE'
-        )
+        await spotify.getArtistRelatedArtists('43ZHCT0cAZBISjO8DG9PnE')
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: undefined,
@@ -546,7 +506,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient method with correct settings', async () => {
-        const albums: PagingAlbums = await spotify.searchAlbums('Rock', {
+        await spotify.searchAlbums('Rock', {
           limit: 2
         })
         expect(httpClientStub).to.have.been.calledWith({
@@ -590,7 +550,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const artists: PagingArtists = await spotify.searchArtists('Elvis', {
+        await spotify.searchArtists('Elvis', {
           limit: 2
         })
         expect(httpClientStub).to.have.been.calledWith({
@@ -633,10 +593,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const playlists: PagingPlaylists = await spotify.searchPlaylists(
-          'abba',
-          { limit: 2, market: 'US' }
-        )
+        await spotify.searchPlaylists('abba', { limit: 2, market: 'US' })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { type: 'playlist', limit: 2, q: 'abba', market: 'US' },
@@ -679,7 +636,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const tracks: PagingTracks = await spotify.searchTracks('love', {
+        await spotify.searchTracks('love', {
           limit: 2
         })
         expect(httpClientStub).to.have.been.calledWith({
@@ -718,7 +675,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const response: PagingSearch = await spotify.search('love', {
+        await spotify.search('love', {
           type: 'artist,playlist',
           limit: 2
         })
@@ -771,7 +728,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const category: Category = await spotify.getBrowseCategory('party', {
+        await spotify.getBrowseCategory('party', {
           country: 'BR'
         })
         expect(httpClientStub).to.have.been.calledWith({
@@ -806,11 +763,10 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const playlists: PagingPlaylists =
-          await spotify.getBrowseCategoryPlaylists('party', {
-            country: 'BR',
-            limit: 20
-          })
+        await spotify.getBrowseCategoryPlaylists('party', {
+          country: 'BR',
+          limit: 20
+        })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { country: 'BR', limit: 20 },
@@ -856,8 +812,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const categories: PagingCategories =
-          await spotify.getBrowseListOfCategories({ offset: 0, limit: 10 })
+        await spotify.getBrowseListOfCategories({ offset: 0, limit: 10 })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: { offset: 0, limit: 10 },
@@ -904,12 +859,11 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const featured: FeaturedPlaylists =
-          await spotify.getBrowseFeaturedPlaylists({
-            offset: 0,
-            limit: 10,
-            timestamp: new Date('2020-01-01')
-          })
+        await spotify.getBrowseFeaturedPlaylists({
+          offset: 0,
+          limit: 10,
+          timestamp: new Date('2020-01-01')
+        })
         expect(httpClientStub).to.have.been.calledWith({
           ...baseHttpClientConfig,
           params: {
@@ -960,7 +914,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const featured: FeaturedAlbums = await spotify.getBrowseNewReleases({
+        await spotify.getBrowseNewReleases({
           offset: 0,
           limit: 10
         })
@@ -1012,7 +966,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const recommendations = await spotify.getBrowseRecommendations({
+        await spotify.getBrowseRecommendations({
           seed_tracks: ['4NHQUGzhtTLFvgF5SZesLK', '1VBflYyxBhnDc9uVib98rw'],
           target_loudness: 0.2
         })
@@ -1112,7 +1066,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const playlists = await spotify.getPlaylists('wizzlersmate', {
+        await spotify.getPlaylists('wizzlersmate', {
           limit: 9,
           offset: 0
         })
@@ -1201,7 +1155,7 @@ describe('EasySpotify', () => {
       })
 
       it('should call httpClient with correct settings', async () => {
-        const playlist = await spotify.createPlaylist('wizzlersmate', {
+        await spotify.createPlaylist('wizzlersmate', {
           name: 'Playlist',
           description: 'Desc',
           collaborative: false,

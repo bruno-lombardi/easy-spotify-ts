@@ -23,42 +23,11 @@ import {
   Track,
   User
 } from './models'
-
-export interface PagingRequestParams {
-  limit?: number
-  offset?: number
-}
-
-export interface OptionalRequestParams extends PagingRequestParams {
-  market?: string
-}
-
-export interface SearchRequestParams extends OptionalRequestParams {
-  type: string
-  include_external?: string
-}
-
-export interface GetAlbumOptions {
-  market: string
-}
-
-export interface GetArtistAlbumsOptions extends OptionalRequestParams {
-  include_groups?: string
-}
-
-export interface CreatePlaylistParams {
-  name: string
-  public?: boolean
-  collaborative?: boolean
-  description?: string
-}
-
-export interface UpdatePlaylistParams {
-  name?: string
-  public?: boolean
-  collaborative?: boolean
-  description?: string
-}
+import { GetAlbumOptions } from './models/Album'
+import { GetArtistAlbumsOptions } from './models/Artist'
+import { PagingRequestParams } from './models/Paging'
+import { CreatePlaylistParams, UpdatePlaylistParams } from './models/Playlist'
+import { OptionalRequestParams, SearchRequestParams } from './models/Request'
 
 export default class EasySpotify {
   public config: EasySpotifyConfig

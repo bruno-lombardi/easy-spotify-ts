@@ -85,3 +85,7 @@ export class Album implements SimplifiedAlbum {
     this.uri = response.uri
   }
 }
+
+export interface GetAlbumOptions {
+  market: string
+}
