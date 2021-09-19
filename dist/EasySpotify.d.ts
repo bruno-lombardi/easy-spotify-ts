@@ -1,6 +1,6 @@
-import { AxiosInstance, AxiosRequestConfig } from "axios";
-import EasySpotifyConfig from "./EasySpotifyConfig";
-import { Album, Artist, Category, FeaturedAlbums, FeaturedPlaylists, PagingAlbums, PagingArtists, PagingCategories, PagingPlaylists, PagingSearch, PagingTracks, Recommendations, RecommendationsQuery, SimplifiedPlaylist, Track, User } from "./models";
+import { AxiosInstance, AxiosRequestConfig } from 'axios';
+import EasySpotifyConfig from './EasySpotifyConfig';
+import { Album, Artist, Category, FeaturedAlbums, FeaturedPlaylists, PagingAlbums, PagingArtists, PagingCategories, PagingPlaylists, PagingSearch, PagingTracks, Recommendations, RecommendationsQuery, SimplifiedPlaylist, Track, User } from './models';
 export interface PagingRequestParams {
     limit?: number;
     offset?: number;
@@ -78,6 +78,6 @@ export default class EasySpotify {
     replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void>;
     unfollowPlaylist(playlistId: string): Promise<void>;
     getUserProfile(userId?: string): Promise<User>;
-    buildRequest(endpoint: string, params?: AxiosRequestConfig["params"], method?: string): Promise<any>;
+    buildRequest(endpoint: string, params?: AxiosRequestConfig['params'], method?: string): Promise<any>;
     private buildHeaders;
 }

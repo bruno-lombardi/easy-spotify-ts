@@ -1,10 +1,14 @@
-import { ExternalUrls } from "./ExternalUrls";
-import { Image } from "./Image";
-import { PagingPlaylists } from "./Paging";
-import { User } from "./User";
+import { ExternalUrls } from './ExternalUrls';
+import { Image } from './Image';
+import { PagingPlaylists } from './Paging';
+import { User } from './User';
 export interface FeaturedPlaylists {
     message: string;
     playlists: PagingPlaylists;
+}
+interface Tracks {
+    href: string;
+    total: number;
 }
 export interface SimplifiedPlaylist {
     collaborative: boolean;
@@ -18,12 +22,8 @@ export interface SimplifiedPlaylist {
     public: any;
     snapshot_id: string;
     tracks: Tracks;
-    type: "playlist";
+    type: 'playlist';
     uri: string;
     description: string;
-}
-interface Tracks {
-    href: string;
-    total: number;
 }
 export {};

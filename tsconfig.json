@@ -1,17 +1,13 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist/",
-        "noImplicitAny": true,
-        "module": "commonjs",
-        "declaration": true,
-        "target": "es5",
-        "lib": ["es2015", "es6", "dom"]
-    },
-    "include": [
-        "./src/**/*"
-    ],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
-    ]
+  "compilerOptions": {
+    "outDir": "dist",
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "declaration": true,
+    "target": "es5",
+    "lib": ["es2015", "es6", "dom"],
+    "baseUrl": ".",
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

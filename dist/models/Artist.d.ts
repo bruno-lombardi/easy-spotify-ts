@@ -1,6 +1,6 @@
-import { ExternalUrls } from "./ExternalUrls";
-import { Followers } from "./Followers";
-import { Image } from "./Image";
+import { ExternalUrls } from './ExternalUrls';
+import { Followers } from './Followers';
+import { Image } from './Image';
 export interface SimplifiedArtist {
     external_urls: ExternalUrls;
     href: string;

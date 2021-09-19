@@ -1,15 +1,15 @@
-import { SimplifiedTrack } from ".";
-export declare class Recommendations {
-    seeds: RecommendationsSeed[];
-    tracks: SimplifiedTrack[];
-}
+import { SimplifiedTrack } from '.';
 export interface RecommendationsSeed {
     afterFilteringSize: number;
     afterRelinkingSize: number;
     href: string;
     id: string;
     initialPoolSize: number;
-    type: "artist" | "genre" | "track";
+    type: 'artist' | 'genre' | 'track';
+}
+export declare class Recommendations {
+    seeds: RecommendationsSeed[];
+    tracks: SimplifiedTrack[];
 }
 export interface RecommendationsQuery {
     limit?: number;

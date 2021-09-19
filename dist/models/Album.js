@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Album = void 0;
 var Album = /** @class */ (function () {
     function Album(response) {
         this.album_type = response.album_type;

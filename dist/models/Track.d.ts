@@ -1,7 +1,7 @@
-import { SimplifiedAlbum } from "./Album";
-import { SimplifiedArtist } from "./Artist";
-import { ExternalIDS } from "./ExternalIDS";
-import { ExternalUrls } from "./ExternalUrls";
+import { SimplifiedAlbum } from './Album';
+import { SimplifiedArtist } from './Artist';
+import { ExternalIDS } from './ExternalIDS';
+import { ExternalUrls } from './ExternalUrls';
 export interface TrackLink {
     external_urls: ExternalUrls;
     href: string;

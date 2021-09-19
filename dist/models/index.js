@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Track = exports.Recommendations = exports.Category = exports.Artist = exports.Album = void 0;
 var Album_1 = require("./Album");
-exports.Album = Album_1.Album;
+Object.defineProperty(exports, "Album", { enumerable: true, get: function () { return Album_1.Album; } });
 var Artist_1 = require("./Artist");
-exports.Artist = Artist_1.Artist;
+Object.defineProperty(exports, "Artist", { enumerable: true, get: function () { return Artist_1.Artist; } });
 var Category_1 = require("./Category");
-exports.Category = Category_1.Category;
+Object.defineProperty(exports, "Category", { enumerable: true, get: function () { return Category_1.Category; } });
 var Recomendations_1 = require("./Recomendations");
-exports.Recommendations = Recomendations_1.Recommendations;
+Object.defineProperty(exports, "Recommendations", { enumerable: true, get: function () { return Recomendations_1.Recommendations; } });
 var Track_1 = require("./Track");
-exports.Track = Track_1.Track;
+Object.defineProperty(exports, "Track", { enumerable: true, get: function () { return Track_1.Track; } });

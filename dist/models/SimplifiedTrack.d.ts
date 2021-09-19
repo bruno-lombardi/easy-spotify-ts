@@ -1,5 +1,5 @@
-import { SimplifiedArtist } from "./Artist";
-import { ExternalUrls } from "./ExternalUrls";
+import { SimplifiedArtist } from './Artist';
+import { ExternalUrls } from './ExternalUrls';
 export interface SimplifiedTrack {
     artists: SimplifiedArtist[];
     available_markets: string[];

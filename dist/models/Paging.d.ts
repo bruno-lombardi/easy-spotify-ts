@@ -1,8 +1,8 @@
-import { SimplifiedAlbum } from "./Album";
-import { SimplifiedArtist } from "./Artist";
-import { Category } from "./Category";
-import { SimplifiedPlaylist } from "./Playlist";
-import { SimplifiedTrack } from "./SimplifiedTrack";
+import { SimplifiedAlbum } from './Album';
+import { SimplifiedArtist } from './Artist';
+import { Category } from './Category';
+import { SimplifiedPlaylist } from './Playlist';
+import { SimplifiedTrack } from './SimplifiedTrack';
 export interface Paging {
     href: string;
     items: any[];
