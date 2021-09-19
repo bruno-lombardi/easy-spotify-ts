@@ -10,3 +10,8 @@ script:
   - eslint 'src/**'
   - yarn run test:coverage
   - yarn run test:report
+
+after_success:
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - chmod +x codecov
+  - ./codecov
