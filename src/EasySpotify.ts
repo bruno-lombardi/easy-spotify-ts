@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  Method
+} from 'axios'
 import EasySpotifyConfig from './EasySpotifyConfig'
 import {
   Album,
@@ -405,7 +410,7 @@ export default class EasySpotify {
     const response: AxiosResponse<any> = await this.buildRequest(
       `users/${userId}/playlists`,
       params,
-      'post'
+      'POST'
     )
     if (response.data) {
       return response.data
@@ -416,28 +421,28 @@ export default class EasySpotify {
     playlistId: string,
     params: UpdatePlaylistParams
   ): Promise<void> {
-    await this.buildRequest(`playlists/${playlistId}`, params, 'put')
+    await this.buildRequest(`playlists/${playlistId}`, params, 'PUT')
   }
 
   public async addPlaylistTracks(
     playlistId: string,
     uris: string[]
   ): Promise<void> {
-    await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, 'post')
+    await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, 'POST')
   }
 
   public async replacePlaylistTracks(
     playlistId: string,
     uris: string[]
   ): Promise<void> {
-    await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, 'put')
+    await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, 'PUT')
   }
 
   public async unfollowPlaylist(playlistId: string): Promise<void> {
     await this.buildRequest(
       `playlists/${playlistId}/followers`,
       undefined,
-      'delete'
+      'DELETE'
     )
   }
 
@@ -452,20 +457,18 @@ export default class EasySpotify {
   public buildRequest(
     endpoint: string,
     params?: AxiosRequestConfig['params'],
-    method: string = 'get'
+    method: Method = 'GET'
   ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       try {
-        const paramsKey = ['put', 'post', 'patch'].some(
-          m => m === method.toLowerCase()
-        )
+        const payloadKey = ['PUT', 'POST', 'PATCH'].some(m => m === method)
           ? 'data'
           : 'params'
 
         this.httpClient({
           headers: this.buildHeaders(),
           method,
-          [paramsKey]: params,
+          [payloadKey]: params,
           url: `${this.getApiUrl()}/${endpoint}`
         }).then(resolve, e => {
           const retryAfter = e.response?.headers
