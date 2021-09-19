@@ -33,3 +33,7 @@ export interface PagingSearch {
     artists: PagingArtists;
     playlists: PagingPlaylists;
 }
+export interface PagingRequestParams {
+    limit?: number;
+    offset?: number;
+}

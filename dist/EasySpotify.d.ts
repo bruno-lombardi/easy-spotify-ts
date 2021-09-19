@@ -1,35 +1,11 @@
-import { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
 import EasySpotifyConfig from './EasySpotifyConfig';
-import { Album, Artist, Category, FeaturedAlbums, FeaturedPlaylists, PagingAlbums, PagingArtists, PagingCategories, PagingPlaylists, PagingSearch, PagingTracks, Recommendations, RecommendationsQuery, SimplifiedPlaylist, Track, User } from './models';
-export interface PagingRequestParams {
-    limit?: number;
-    offset?: number;
-}
-export interface OptionalRequestParams extends PagingRequestParams {
-    market?: string;
-}
-export interface SearchRequestParams extends OptionalRequestParams {
-    type: string;
-    include_external?: string;
-}
-export interface GetAlbumOptions {
-    market: string;
-}
-export interface GetArtistAlbumsOptions extends OptionalRequestParams {
-    include_groups?: string;
-}
-export interface CreatePlaylistParams {
-    name: string;
-    public?: boolean;
-    collaborative?: boolean;
-    description?: string;
-}
-export interface UpdatePlaylistParams {
-    name?: string;
-    public?: boolean;
-    collaborative?: boolean;
-    description?: string;
-}
+import { Album, Artist, FeaturedAlbums, FeaturedPlaylists, PagingAlbums, PagingArtists, PagingCategories, PagingPlaylists, PagingSearch, PagingTracks, Recommendations, RecommendationsQuery, SimplifiedPlaylist, Track, User } from './models';
+import { GetAlbumOptions } from './models/Album';
+import { GetArtistAlbumsOptions } from './models/Artist';
+import { PagingRequestParams } from './models/Paging';
+import { CreatePlaylistParams, UpdatePlaylistParams } from './models/Playlist';
+import { OptionalRequestParams, SearchRequestParams } from './models/Request';
 export default class EasySpotify {
     config: EasySpotifyConfig;
     httpClient: AxiosInstance;
@@ -54,7 +30,7 @@ export default class EasySpotify {
     getBrowseCategory(id: string, options?: {
         country?: string;
         locale?: string;
-    }): Promise<Category>;
+    }): Promise<any>;
     getBrowseCategoryPlaylists(id: string, options: {
         country?: string;
     } & PagingRequestParams): Promise<PagingPlaylists>;
@@ -78,6 +54,6 @@ export default class EasySpotify {
     replacePlaylistTracks(playlistId: string, uris: string[]): Promise<void>;
     unfollowPlaylist(playlistId: string): Promise<void>;
     getUserProfile(userId?: string): Promise<User>;
-    buildRequest(endpoint: string, params?: AxiosRequestConfig['params'], method?: string): Promise<any>;
+    buildRequest(endpoint: string, params?: AxiosRequestConfig['params'], method?: Method): Promise<any>;
     private buildHeaders;
 }

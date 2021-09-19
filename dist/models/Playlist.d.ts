@@ -26,4 +26,16 @@ export interface SimplifiedPlaylist {
     uri: string;
     description: string;
 }
+export interface CreatePlaylistParams {
+    name: string;
+    public?: boolean;
+    collaborative?: boolean;
+    description?: string;
+}
+export interface UpdatePlaylistParams {
+    name?: string;
+    public?: boolean;
+    collaborative?: boolean;
+    description?: string;
+}
 export {};

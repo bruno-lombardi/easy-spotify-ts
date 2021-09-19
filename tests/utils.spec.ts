@@ -11,9 +11,10 @@ describe('Utils', () => {
     const data = handleResponse(response)
     expect(data).to.eq(response.data)
   })
+
   it('should throw error when status is not 200', () => {
     const response = {
-      data: { id: 'some id' },
+      data: { error: { message: 'Error', status: 400 } },
       status: 400
     } as AxiosResponse
 

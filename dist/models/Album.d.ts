@@ -45,3 +45,6 @@ export declare class Album implements SimplifiedAlbum {
     uri: string;
     constructor(response: any);
 }
+export interface GetAlbumOptions {
+    market: string;
+}
