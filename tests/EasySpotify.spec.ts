@@ -105,7 +105,10 @@ describe('EasySpotify', () => {
       let id = '4aawyAB9vmqN3uQ7FjRGTy'
 
       beforeEach(() => {
-        httpClientStub.resolves({ data: { id, name: 'Cyndi Lauper' } })
+        httpClientStub.resolves({
+          data: { id, name: 'Cyndi Lauper' },
+          status: 200
+        })
       })
 
       it('should call httpClient with correct config', async () => {
@@ -127,11 +130,7 @@ describe('EasySpotify', () => {
       it('should not get a album if invalid id', async () => {
         httpClientStub.rejects({ response: { status: 400 } })
         id = 'invalidId'
-        try {
-          await spotify.getAlbum(id)
-        } catch (err) {
-          expect(err.response.status).to.eq(400)
-        }
+        expect(() => spotify.getAlbum(id)).to.throw
       })
     })
 
@@ -152,7 +151,8 @@ describe('EasySpotify', () => {
               { id: '6JWc4iAiJ9FjyK0B59ABb4', name: 'Rock is Good' },
               { id: '6UXCm6bOO4gFlDQZV5yL37', name: 'Just a Fake Name' }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -176,11 +176,7 @@ describe('EasySpotify', () => {
       it('should throw error if invalid ids', async () => {
         httpClientStub.rejects({ response: { status: 400 } })
         ids = ['invalid', 'id']
-        try {
-          await await spotify.getAlbums(ids)
-        } catch (err) {
-          expect(err.response.status).to.eq(400)
-        }
+        expect(() => spotify.getAlbums(ids)).to.throw
       })
     })
 
@@ -196,7 +192,8 @@ describe('EasySpotify', () => {
               { id: '6JWc4iAiJ9FjyK0B59ABb4', name: 'Rock is Good' },
               { id: '6UXCm6bOO4gFlDQZV5yL37', name: 'Just a Fake Name' }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -225,11 +222,7 @@ describe('EasySpotify', () => {
       it('should not get tracks for invalid album', async () => {
         httpClientStub.rejects({ response: { status: 400 } })
         id = 'invalid'
-        try {
-          await await spotify.getAlbumTracks(id)
-        } catch (err) {
-          expect(err.response.status).to.eq(400)
-        }
+        expect(() => spotify.getAlbumTracks(id)).to.throw
       })
     })
 
@@ -242,7 +235,8 @@ describe('EasySpotify', () => {
             id: '0OdUWJ0sBjDrqHygGUXeCF',
             name: 'Band of Horses',
             popularity: 100
-          }
+          },
+          status: 200
         })
       })
 
@@ -265,11 +259,7 @@ describe('EasySpotify', () => {
       it('should not get artist if invalid id', async () => {
         httpClientStub.rejects({ response: { status: 400 } })
         id = 'invalid'
-        try {
-          await await spotify.getArtist(id)
-        } catch (err) {
-          expect(err.response.status).to.eq(400)
-        }
+        expect(() => spotify.getArtist(id)).to.throw
       })
     })
 
@@ -300,7 +290,8 @@ describe('EasySpotify', () => {
                 popularity: 82
               }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -326,11 +317,7 @@ describe('EasySpotify', () => {
       it('should not get artists if invalid ids', async () => {
         ids = ['invalid', 'id']
         httpClientStub.rejects({ response: { status: 400 } })
-        try {
-          await spotify.getArtists(ids)
-        } catch (err) {
-          expect(err.response.status).to.eq(400)
-        }
+        expect(() => spotify.getArtists(ids)).to.throw
       })
     })
 
@@ -338,7 +325,6 @@ describe('EasySpotify', () => {
       beforeEach(() => {
         httpClientStub.resolves({
           data: {
-            // tslint:disable-next-line:max-line-length
             href: 'https://api.spotify.com/v1/artists/1vCWHaC5f2uS3yhpwWbIA6/albums?offset=0&limit=3market=ES&include_groups=appears_on',
             items: [
               {
@@ -352,7 +338,8 @@ describe('EasySpotify', () => {
                 album_group: 'appears_on'
               }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -385,6 +372,11 @@ describe('EasySpotify', () => {
         expect(artistAlbums.items[0].id).to.eq('43977e0YlJeMXG77uCCSMX')
         expect(artistAlbums.href).to.exist
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.getArtistAlbums('invalid_id')).to.throw
+      })
     })
 
     describe('getArtistTopTracks', () => {
@@ -403,7 +395,8 @@ describe('EasySpotify', () => {
                 uri: 'spotify:track:44AyOl4qVkzS48vBsbNXaC'
               }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -426,6 +419,11 @@ describe('EasySpotify', () => {
         expect(artistTopTracks).to.not.be.empty
         expect(artistTopTracks.length).to.eq(2)
         expect(artistTopTracks[0].id).to.eq('44AyOl4qVkzS48vBsbNXaC')
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.getArtistTopTracks('invalid_id')).to.throw
       })
     })
 
@@ -461,7 +459,8 @@ describe('EasySpotify', () => {
                 id: '5ZKMPRDHc7qElVJFh3uRqB'
               }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -482,6 +481,11 @@ describe('EasySpotify', () => {
         expect(artists.length).to.eq(2)
         expect(artists[0].id).to.eq('5ZKMPRDHc7qElVJFh3uRqB')
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.getArtistRelatedArtists('invalid_id')).to.throw
+      })
     })
 
     describe('searchAlbums', () => {
@@ -501,7 +505,8 @@ describe('EasySpotify', () => {
               ],
               total: 40000
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -522,6 +527,15 @@ describe('EasySpotify', () => {
         })
         expect(albums.items).to.not.be.empty
         expect(albums.items[0].id).to.eq('6YkkoAG1rnLqET8SgT6ngp')
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.searchAlbums('Rock', {
+            limit: 2
+          })
+        ).to.throw
       })
     })
 
@@ -545,7 +559,8 @@ describe('EasySpotify', () => {
               offset: 2,
               total: 4442
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -566,6 +581,11 @@ describe('EasySpotify', () => {
         })
         expect(artists.items).to.not.be.empty
         expect(artists.items[0].name).to.eq('Elvis Presley')
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.searchArtists('invalid_search')).to.throw
       })
     })
 
@@ -588,7 +608,8 @@ describe('EasySpotify', () => {
               offset: 0,
               total: 21654
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -609,6 +630,11 @@ describe('EasySpotify', () => {
         expect(playlists.items).to.not.be.empty
         expect(playlists.limit).to.eq(2)
         expect(playlists.items.length).to.eq(2)
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.searchPlaylists('abba')).to.throw
       })
     })
 
@@ -631,7 +657,8 @@ describe('EasySpotify', () => {
               offset: 0,
               total: 21654
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -654,6 +681,11 @@ describe('EasySpotify', () => {
         expect(tracks.limit).to.eq(2)
         expect(tracks.items.length).to.eq(2)
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.searchTracks('abba')).to.throw
+      })
     })
 
     describe('search', () => {
@@ -670,7 +702,8 @@ describe('EasySpotify', () => {
               ],
               total: 1
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -696,6 +729,11 @@ describe('EasySpotify', () => {
         expect(response.playlists.items).to.not.be.empty
         expect(response.playlists.items[0].id).to.eq('37i9dQZF1DX50QitC6Oqtn')
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.search('abba', { type: 'artist' })).to.throw
+      })
     })
 
     describe('getBrowseCategory', () => {
@@ -712,7 +750,8 @@ describe('EasySpotify', () => {
             ],
             id: 'party',
             name: 'Party'
-          }
+          },
+          status: 200
         })
       })
 
@@ -737,6 +776,15 @@ describe('EasySpotify', () => {
           url: 'https://api.spotify.com/v1/browse/categories/party'
         })
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getBrowseCategory('party', {
+            country: 'US'
+          })
+        ).to.throw
+      })
     })
 
     describe('getBrowseCategoryPlaylists', () => {
@@ -758,7 +806,8 @@ describe('EasySpotify', () => {
               offset: 0,
               total: 21654
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -785,6 +834,16 @@ describe('EasySpotify', () => {
         expect(playlists.limit).to.eq(20)
         expect(playlists.total).to.exist
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getBrowseCategoryPlaylists('party', {
+            country: 'BR',
+            limit: 20
+          })
+        ).to.throw
+      })
     })
 
     describe('getBrowseListOfCategories', () => {
@@ -807,7 +866,8 @@ describe('EasySpotify', () => {
               offset: 0,
               total: 31
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -827,6 +887,13 @@ describe('EasySpotify', () => {
         expect(categories.items).to.not.be.empty
         expect(categories.total).to.exist
         expect(categories.limit).to.exist
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getBrowseListOfCategories({ offset: 0, limit: 10 })
+        ).to.throw
       })
     })
 
@@ -854,7 +921,8 @@ describe('EasySpotify', () => {
               offset: 1,
               total: 20
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -887,6 +955,17 @@ describe('EasySpotify', () => {
         expect(featured.playlists.items[0].id).to.exist
         expect(featured.playlists.total).to.exist
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getBrowseFeaturedPlaylists({
+            offset: 0,
+            limit: 10,
+            timestamp: new Date('2020-01-01')
+          })
+        ).to.throw
+      })
     })
 
     describe('getBrowseNewReleases', () => {
@@ -909,7 +988,8 @@ describe('EasySpotify', () => {
               offset: 0,
               total: 300
             }
-          }
+          },
+          status: 200
         })
       })
 
@@ -934,6 +1014,16 @@ describe('EasySpotify', () => {
         expect(featured.albums.items).to.not.be.empty
         expect(featured.albums.limit).to.exist
         expect(featured.albums.offset).to.exist
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getBrowseNewReleases({
+            offset: 0,
+            limit: 10
+          })
+        ).to.throw
       })
     })
 
@@ -961,7 +1051,8 @@ describe('EasySpotify', () => {
                 id: '4NHQUGzhtTLFvgF5SZesLK'
               }
             ]
-          }
+          },
+          status: 200
         })
       })
 
@@ -988,6 +1079,16 @@ describe('EasySpotify', () => {
         expect(recommendations.seeds).to.not.be.empty
         expect(recommendations.tracks).to.not.be.empty
         expect(recommendations.tracks.length).to.eq(2)
+      })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getBrowseRecommendations({
+            seed_tracks: ['4NHQUGzhtTLFvgF5SZesLK', '1VBflYyxBhnDc9uVib98rw'],
+            target_loudness: 0.2
+          })
+        ).to.throw
       })
     })
 
@@ -1061,7 +1162,8 @@ describe('EasySpotify', () => {
             offset: 0,
             previous: null,
             total: 9
-          }
+          },
+          status: 200
         })
       })
 
@@ -1147,11 +1249,21 @@ describe('EasySpotify', () => {
         expect(playlists.offset).to.eq(0)
         expect(playlists.total).to.eq(9)
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.getPlaylists('wizzlersmate', {
+            limit: 9,
+            offset: 0
+          })
+        ).to.throw
+      })
     })
 
     describe('createPlaylist', () => {
       beforeEach(() => {
-        httpClientStub.resolves({ data: 'response' })
+        httpClientStub.resolves({ data: 'response', status: 200 })
       })
 
       it('should call httpClient with correct settings', async () => {
@@ -1183,11 +1295,23 @@ describe('EasySpotify', () => {
         })
         expect(playlist).to.eql('response')
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.createPlaylist('wizzlersmate', {
+            name: 'Playlist',
+            description: 'Desc',
+            collaborative: false,
+            public: true
+          })
+        ).to.throw
+      })
     })
 
     describe('updatePlaylistDetails', () => {
       beforeEach(() => {
-        httpClientStub.resolves()
+        httpClientStub.resolves({ status: 200 })
       })
 
       it('should call httpClient with correct settings', async () => {
@@ -1209,11 +1333,23 @@ describe('EasySpotify', () => {
           url: 'https://api.spotify.com/v1/playlists/playlistid'
         })
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.updatePlaylistDetails('playlistid', {
+            name: 'New Playlist',
+            description: 'New Desc',
+            collaborative: true,
+            public: false
+          })
+        ).to.throw
+      })
     })
 
     describe('addPlaylistTracks', () => {
       beforeEach(() => {
-        httpClientStub.resolves()
+        httpClientStub.resolves({ status: 200 })
       })
 
       it('should call httpClient with correct settings', async () => {
@@ -1225,11 +1361,17 @@ describe('EasySpotify', () => {
           url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
         })
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() => spotify.addPlaylistTracks('playlistid', ['uri1', 'url2']))
+          .to.throw
+      })
     })
 
     describe('replacePlaylistTracks', () => {
       beforeEach(() => {
-        httpClientStub.resolves()
+        httpClientStub.resolves({ status: 200 })
       })
 
       it('should call httpClient with correct settings', async () => {
@@ -1241,11 +1383,18 @@ describe('EasySpotify', () => {
           url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
         })
       })
+
+      it('should throw err if response fails', async () => {
+        httpClientStub.rejects({ response: { status: 400 } })
+        expect(() =>
+          spotify.replacePlaylistTracks('playlistid', ['uri1', 'url2'])
+        ).to.throw
+      })
     })
 
     describe('unfollowPlaylist', () => {
       beforeEach(() => {
-        httpClientStub.resolves()
+        httpClientStub.resolves({ status: 200 })
       })
 
       it('should call httpClient with correct settings', async () => {
@@ -1256,6 +1405,14 @@ describe('EasySpotify', () => {
           params: undefined,
           url: 'https://api.spotify.com/v1/playlists/playlistid/followers'
         })
+      })
+
+      it('should throw error when error', async () => {
+        httpClientStub.resolves({
+          status: 400,
+          data: { error: { status: 400, message: 'error' } }
+        })
+        expect(() => spotify.unfollowPlaylist('playlistid')).to.throw
       })
     })
 
@@ -1285,7 +1442,8 @@ describe('EasySpotify', () => {
             product: 'premium',
             type: 'user',
             uri: 'spotify:user:wizzler'
-          }
+          },
+          status: 200
         })
       })
 
@@ -1297,6 +1455,20 @@ describe('EasySpotify', () => {
           params: undefined,
           url: 'https://api.spotify.com/v1/users/wizzler'
         })
+      })
+
+      it('should throw error when error', async () => {
+        httpClientStub.resolves({
+          status: 400,
+          data: { error: { status: 400, message: 'error' } }
+        })
+        expect(() => spotify.getUserProfile('playlistid')).to.throw
+      })
+
+      it('should return user profile when success', async () => {
+        const profile = await spotify.getUserProfile('wizzler')
+        expect(profile).to.not.be.undefined
+        expect(profile.id).to.eql('wizzler')
       })
     })
   })

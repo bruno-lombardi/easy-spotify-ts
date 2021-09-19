@@ -8,7 +8,6 @@ import EasySpotifyConfig from './EasySpotifyConfig'
 import {
   Album,
   Artist,
-  Category,
   FeaturedAlbums,
   FeaturedPlaylists,
   PagingAlbums,
@@ -28,6 +27,7 @@ import { GetArtistAlbumsOptions } from './models/Artist'
 import { PagingRequestParams } from './models/Paging'
 import { CreatePlaylistParams, UpdatePlaylistParams } from './models/Playlist'
 import { OptionalRequestParams, SearchRequestParams } from './models/Request'
+import { handleResponse } from './utils'
 
 export default class EasySpotify {
   public config: EasySpotifyConfig
@@ -36,7 +36,9 @@ export default class EasySpotify {
 
   constructor(config: EasySpotifyConfig) {
     this.config = config
-    this.httpClient = axios
+    this.httpClient = axios.create({
+      validateStatus: status => status < 500
+    })
   }
 
   public setToken(token: string): void {
@@ -66,10 +68,8 @@ export default class EasySpotify {
       `albums/${id}`,
       options
     )
-    if (response.data) {
-      return new Album(response.data)
-    }
-    throw new Error('Could not find any album with that id')
+    const data = handleResponse(response)
+    return new Album(data)
   }
 
   public async getAlbums(
@@ -80,13 +80,8 @@ export default class EasySpotify {
       ids: `${ids}`,
       ...options
     })
-    if (response.data.albums) {
-      const albums: Album[] = response.data.albums.map(
-        (album: any) => new Album(album)
-      )
-      return albums
-    }
-    throw new Error('Could not find any albums with provided ids')
+    const data = handleResponse(response)
+    return data.albums.map((album: any) => new Album(album))
   }
 
   public async getAlbumTracks(
@@ -97,33 +92,23 @@ export default class EasySpotify {
       `albums/${id}/tracks`,
       options
     )
-    if (response.data) {
-      return response.data
-    }
-    throw new Error('Could not find any tracks for provided id')
+    return handleResponse(response)
   }
 
   public async getArtist(id: string): Promise<Artist> {
     const response: AxiosResponse<any> = await this.buildRequest(
       `artists/${id}`
     )
-    if (response.data) {
-      return response.data
-    }
-    throw new Error('Could not find any artist for provided id')
+    const data = handleResponse(response)
+    return new Artist(data)
   }
 
   public async getArtists(ids: string[]): Promise<Artist[]> {
     const response: AxiosResponse<any> = await this.buildRequest('artists', {
       ids: `${ids}`
     })
-    if (response.data.artists) {
-      const artists: Artist[] = response.data.artists.map(
-        (artist: any) => new Artist(artist)
-      )
-      return artists
-    }
-    throw new Error('No artists found')
+    const data = handleResponse(response)
+    return data.artists.map((artist: any) => new Artist(artist))
   }
 
   public async getArtistAlbums(
@@ -134,10 +119,7 @@ export default class EasySpotify {
       `artists/${id}/albums`,
       options
     )
-    if (response.data) {
-      return response.data
-    }
-    throw new Error('Could not find any tracks for provided id')
+    return handleResponse(response)
   }
 
   public async getArtistTopTracks(
@@ -148,26 +130,16 @@ export default class EasySpotify {
       `artists/${id}/top-tracks`,
       options
     )
-    if (response.data.tracks) {
-      const tracks: Track[] = response.data.tracks.map(
-        (track: any) => new Track(track)
-      )
-      return tracks
-    }
-    throw new Error('Could not find any tracks for provided id')
+    const data = handleResponse(response)
+    return data.tracks.map((track: any) => new Track(track))
   }
 
   public async getArtistRelatedArtists(id: string): Promise<Artist[]> {
     const response: AxiosResponse<any> = await this.buildRequest(
       `artists/${id}/related-artists`
     )
-    if (response.data.artists) {
-      const artists: Artist[] = response.data.artists.map(
-        (artist: any) => new Artist(artist)
-      )
-      return artists
-    }
-    throw new Error('Could not find related artists for provided id')
+    const data = handleResponse(response)
+    return data.artists.map((artist: any) => new Artist(artist))
   }
 
   public async searchAlbums(
@@ -183,10 +155,8 @@ export default class EasySpotify {
       'search',
       params
     )
-    if (response.data.albums) {
-      return response.data.albums
-    }
-    throw new Error('Could not find any albums for this query')
+    const data = handleResponse(response)
+    return data.albums
   }
 
   public async searchArtists(
@@ -202,9 +172,8 @@ export default class EasySpotify {
       'search',
       params
     )
-    if (response.data.artists) {
-      return response.data.artists
-    }
+    const data = handleResponse(response)
+    return data.artists
   }
 
   public async searchPlaylists(
@@ -220,9 +189,8 @@ export default class EasySpotify {
       'search',
       params
     )
-    if (response.data.playlists) {
-      return response.data.playlists
-    }
+    const data = handleResponse(response)
+    return data.playlists
   }
 
   public async searchTracks(
@@ -238,9 +206,8 @@ export default class EasySpotify {
       'search',
       params
     )
-    if (response.data.tracks) {
-      return response.data.tracks
-    }
+    const data = handleResponse(response)
+    return data.tracks
   }
 
   public async search(
@@ -251,9 +218,7 @@ export default class EasySpotify {
       ...options,
       q: query
     })
-    if (response.data) {
-      return response.data
-    }
+    return handleResponse(response)
   }
 
   public async getBrowseCategory(
@@ -264,10 +229,7 @@ export default class EasySpotify {
       `browse/categories/${id}`,
       options
     )
-    if (response.data) {
-      return new Category(response.data)
-    }
-    throw new Error('Could not find any category with that id')
+    return handleResponse(response)
   }
 
   public async getBrowseCategoryPlaylists(
@@ -278,10 +240,8 @@ export default class EasySpotify {
       `browse/categories/${id}/playlists`,
       options
     )
-    if (response.data) {
-      return response.data.playlists
-    }
-    throw new Error('Could not find any playlist from that category id')
+    const data = handleResponse(response)
+    return data.playlists
   }
 
   public async getBrowseListOfCategories(
@@ -291,10 +251,8 @@ export default class EasySpotify {
       'browse/categories',
       options
     )
-    if (response.data) {
-      return response.data.categories
-    }
-    throw new Error('Could not get any categories')
+    const data = handleResponse(response)
+    return data.categories
   }
 
   public async getBrowseFeaturedPlaylists(
@@ -311,10 +269,7 @@ export default class EasySpotify {
       'browse/featured-playlists',
       options
     )
-    if (response.data) {
-      return response.data
-    }
-    throw new Error('Could not get any featured playlists')
+    return handleResponse(response)
   }
 
   public async getBrowseNewReleases(
@@ -324,10 +279,7 @@ export default class EasySpotify {
       'browse/new-releases',
       options
     )
-    if (response.data) {
-      return response.data
-    }
-    throw new Error('Could not get any albums')
+    return handleResponse(response)
   }
 
   public async getBrowseRecommendations(
@@ -352,10 +304,7 @@ export default class EasySpotify {
       'recommendations',
       query
     )
-    if (response.data) {
-      return response.data
-    }
-    throw new Error('Could not get any recommendations')
+    return handleResponse(response)
   }
 
   public async getPlaylists(
@@ -367,9 +316,7 @@ export default class EasySpotify {
       endpoint,
       options
     )
-    if (response.data) {
-      return response.data
-    }
+    return handleResponse(response)
   }
 
   public async createPlaylist(
@@ -381,46 +328,58 @@ export default class EasySpotify {
       params,
       'POST'
     )
-    if (response.data) {
-      return response.data
-    }
+    return handleResponse(response)
   }
 
   public async updatePlaylistDetails(
     playlistId: string,
     params: UpdatePlaylistParams
   ): Promise<void> {
-    await this.buildRequest(`playlists/${playlistId}`, params, 'PUT')
+    const response = await this.buildRequest(
+      `playlists/${playlistId}`,
+      params,
+      'PUT'
+    )
+    return handleResponse(response)
   }
 
   public async addPlaylistTracks(
     playlistId: string,
     uris: string[]
   ): Promise<void> {
-    await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, 'POST')
+    const response = await this.buildRequest(
+      `playlists/${playlistId}/tracks`,
+      { uris },
+      'POST'
+    )
+    return handleResponse(response)
   }
 
   public async replacePlaylistTracks(
     playlistId: string,
     uris: string[]
   ): Promise<void> {
-    await this.buildRequest(`playlists/${playlistId}/tracks`, { uris }, 'PUT')
+    const response = await this.buildRequest(
+      `playlists/${playlistId}/tracks`,
+      { uris },
+      'PUT'
+    )
+    return handleResponse(response)
   }
 
   public async unfollowPlaylist(playlistId: string): Promise<void> {
-    await this.buildRequest(
+    const response = await this.buildRequest(
       `playlists/${playlistId}/followers`,
       undefined,
       'DELETE'
     )
+    return handleResponse(response)
   }
 
   public async getUserProfile(userId?: string): Promise<User> {
     const endpoint = userId ? `users/${userId}` : 'me'
-    const response: AxiosResponse<any> = await this.buildRequest(endpoint)
-    if (response.data) {
-      return response.data
-    }
+    const response = await this.buildRequest(endpoint)
+    return handleResponse(response)
   }
 
   public buildRequest(
@@ -457,7 +416,7 @@ export default class EasySpotify {
     })
   }
 
-  private buildHeaders(): any {
+  private buildHeaders(): Record<string, any> {
     return {
       Authorization: `Bearer ${this.config.token}`,
       'Content-Type': 'application/json'
