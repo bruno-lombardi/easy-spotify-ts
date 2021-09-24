@@ -41,6 +41,7 @@ spotify.getAlbums(["382ObEPsp2rxGrnsizN5TX", "1A2GTWGtFfWp7KSQTwWOyo"], {market:
 ```
 
 ## Methods available
+## Albums
 ### getAlbum(id: string, options?: GetAlbumOptions): Promise\<Album\>
 This method returns an album object with the provided id.
 > Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/albums/get-album/)
@@ -68,6 +69,7 @@ const tracks = await spotify.getAlbumTracks("1A2GTWGtFfWp7KSQTwWOyo", {limit: 10
 // tracks.limit
 // tracks.items[0].artists[1].name
 ```
+## Artists
 ### getArtist(id: string): Promise\<Artist\>
 This method returns an complete artist object for the given id.
 > Check [official documentation page](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
@@ -125,7 +127,7 @@ const relatedArtists = await spotfiy.getArtistRelatedArtists("43ZHCT0cAZBISjO8DG
 // relatedArtists[1].images[0].url
 // relatedArtists[3].genres[0]
 ```
-
+## Search
 ### searchAlbums(query: string, options?: OptionalRequestParams): Promise\<PagingAlbums\>
 This method returns an paging object of albums for the given query.
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/search/search/)
@@ -185,67 +187,68 @@ const result = await spotify.search("love", {type: "artist,playlist", limit: 2})
 // result.albums -> undefined
 ```
 
+## Browse
 ### getBrowseCategory(id: string, options?: { country?: string, locale?: string }): Promise\<Category\>
 This method returns a single category used to tag items in Spotify (on, for example, the Spotify player’s “Browse” tab).
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-category/)
 ```ts
-const result = await spotify.getBrowseCategory("party", {country: "US"});
+const category = await spotify.getBrowseCategory("party", {country: "US"});
 
 // do something with result
-// result.href
-// result.icons[0].height
+// category.href
+// category.icons[0].height
 ```
 
 ### getBrowseCategoryPlaylists(id: string, options: { country?: string, limit?: number, offset?: number }): Promise\<PagingPlaylists\>
 This method returns a paged list of Spotify playlists tagged with a particular category.
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-categorys-playlists/)
 ```ts
-const result = await spotify.getBrowseCategoryPlaylists("party", {country: "US"});
+const categoryPlaylists = await spotify.getBrowseCategoryPlaylists("party", {country: "US"});
 
 // do something with result
-// result.href
-// result.items[0].description
-// result.limit
-// result.offset
+// categoryPlaylists.href
+// categoryPlaylists.items[0].description
+// categoryPlaylists.limit
+// categoryPlaylists.offset
 ```
 
 ### getBrowseListOfCategories(options: {locale?: string, country?: string, offset?: number, limit?: number}): Promise\<PagingCategories\>
 This method returns a list of categories used to tag items in Spotify (on, for example, the Spotify player’s “Browse” tab).
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-list-categories/)
 ```ts
-const result = await spotify.getBrowseListOfCategories({country: "US", limit: 10});
+const categories = await spotify.getBrowseListOfCategories({country: "US", limit: 10});
 
 // do something with result
-// result.href
-// result.items[0].id
-// result.limit
-// result.offset
+// categories.href
+// categories.items[0].id
+// categories.limit
+// categories.offset
 ```
 
 ### getBrowseFeaturedPlaylists(options: {locale?: string, country?: string, timestamp?: Date, limit?: number, offset?: number}): Promise\<FeaturedPlaylists\>
 This method returns a list of Spotify featured playlists (shown, for example, on a Spotify player’s ‘Browse’ tab).
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-list-featured-playlists/)
 ```ts
-const result = await spotify.getBrowseFeaturedPlaylists({country: "US", limit: 10});
+const featuredPlaylists = await spotify.getBrowseFeaturedPlaylists({country: "US", limit: 10});
 
 // do something with result
-// result.message
-// result.playlists.items[0].name
-// result.playlists.limit
-// result.playlists.offset
+// featuredPlaylists.message
+// featuredPlaylists.playlists.items[0].name
+// featuredPlaylists.playlists.limit
+// featuredPlaylists.playlists.offset
 ```
 
 ### getBrowseNewReleases(options: {country?: string, limit?: number, offset?: number}): Promise\<FeaturedAlbums\>
 This method returns a list of new album releases featured in Spotify (shown, for example, on a Spotify player’s “Browse” tab).
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-list-new-releases/)
 ```ts
-const result = await spotify.getBrowseNewReleases({country: "US", limit: 10});
+const newReleases = await spotify.getBrowseNewReleases({country: "US", limit: 10});
 
 // do something with result
-// result.message
-// result.albums.items[0].name
-// result.albums.limit
-// result.albums.offset
+// newReleases.message
+// newReleases.albums.items[0].name
+// newReleases.albums.limit
+// newReleases.albums.offset
 ```
 
 ### getBrowseRecommendations(query: RecommendationsQuery): Promise\<PagingCategories\>
@@ -255,7 +258,7 @@ field has a hint when you type that should help you know what you're
 doing.
 > Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/)
 ```ts
-const result = await spotify.getBrowseRecommendations(
+const recommendations = await spotify.getBrowseRecommendations(
   {
     limit: 10,
     seed_tracks: ["4NHQUGzhtTLFvgF5SZesLK", "1VBflYyxBhnDc9uVib98rw"],
@@ -266,9 +269,78 @@ const result = await spotify.getBrowseRecommendations(
 );
 
 // do something with result
-// result.seeds
-// result.tracks
+// recommendations.seeds
+// recommendations.tracks
 ```
+
+### getBrowseRecommendationGenres(): Promise\<string[]\>
+This method retrieve a list of available genres seed parameter values for recommendations.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-recommendation-genres)
+```ts
+const genres = await spotify.getBrowseRecommendationGenres();
+
+// do something with result
+// console.log(genres)
+// -> ["blues","classical","country","dance"...]
+```
+
+## Playlists
+### getCurrentUserPlaylists(options?: PagingRequestParams): Promise\<PagingPlaylists\>
+This method returns a list of the playlists owned or followed by the current authorized Spotify user.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-a-list-of-current-users-playlists)
+```ts
+const myPlaylists = await spotify.getCurrentUserPlaylists();
+
+// do something with result
+// console.log(myPlaylists.items)
+```
+### getUserPlaylists(userId: string, options?: PagingRequestParams): Promise\<PagingPlaylists\>
+This method returns a list of the playlists owned or followed by a Spotify user.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-list-users-playlists)
+```ts
+const userPlaylists = await spotify.getUserPlaylists('wizzlersmate');
+
+// do something with result
+// console.log(userPlaylists.items)
+```
+### createPlaylist(userId: string, params: CreatePlaylistParams): Promise\<SimplifiedPlaylist\>
+This method create a playlist for a Spotify user. The playlist starts empty until you add tracks to it.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-create-playlist)
+```ts
+const playlist = await spotify.createPlaylist('wizzlersmate', {
+  name: 'Playlist',
+  description: 'Desc',
+  collaborative: false,
+  public: true
+})
+
+// do something with result
+// console.log(playlist.id)
+// console.log(playlist.name)
+```
+### getPlaylist(playlistId: string): Promise\<Playlist\>
+This method returns a playlist owned by a Spotify user.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-playlist)
+```ts
+const playlist = await spotify.getPlaylist('59ZbFPES4DQwEjBpWHzrtC')
+
+// do something with result
+// console.log(playlist.id)
+// console.log(playlist.name)
+```
+### updatePlaylistDetails(playlistId: string, params: UpdatePlaylistParams): Promise\<void\>
+This method lets your change a playlist’s name and public/private state. (The user must, of course, own the playlist)
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-change-playlist-details)
+```ts
+await spotify.updatePlaylistDetails('playlistid', {
+  name: 'New Playlist',
+  description: 'New Desc',
+  collaborative: true,
+  public: false
+})
+```
+
+
 
 ## <a name="features"></a> Features to implement
 - [x] Support Search endpoint

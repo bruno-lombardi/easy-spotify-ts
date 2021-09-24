@@ -25,7 +25,11 @@ import {
 import { GetAlbumOptions } from './models/Album'
 import { GetArtistAlbumsOptions } from './models/Artist'
 import { PagingRequestParams } from './models/Paging'
-import { CreatePlaylistParams, UpdatePlaylistParams } from './models/Playlist'
+import {
+  CreatePlaylistParams,
+  Playlist,
+  UpdatePlaylistParams
+} from './models/Playlist'
 import { OptionalRequestParams, SearchRequestParams } from './models/Request'
 import { handleResponse } from './utils'
 
@@ -221,6 +225,44 @@ export default class EasySpotify {
     return handleResponse(response)
   }
 
+  public async getBrowseNewReleases(
+    options: { country?: string } & PagingRequestParams
+  ): Promise<FeaturedAlbums> {
+    const response: AxiosResponse<any> = await this.buildRequest(
+      'browse/new-releases',
+      options
+    )
+    return handleResponse(response)
+  }
+
+  public async getBrowseFeaturedPlaylists(
+    options: {
+      locale?: string
+      country?: string
+      timestamp?: Date
+    } & PagingRequestParams
+  ): Promise<FeaturedPlaylists> {
+    if (options.timestamp) {
+      Object.assign(options, { timestamp: options.timestamp.toISOString() })
+    }
+    const response: AxiosResponse<any> = await this.buildRequest(
+      'browse/featured-playlists',
+      options
+    )
+    return handleResponse(response)
+  }
+
+  public async getBrowseListOfCategories(
+    options: { locale?: string; country?: string } & PagingRequestParams
+  ): Promise<PagingCategories> {
+    const response: AxiosResponse<any> = await this.buildRequest(
+      'browse/categories',
+      options
+    )
+    const data = handleResponse(response)
+    return data.categories
+  }
+
   public async getBrowseCategory(
     id: string,
     options?: { country?: string; locale?: string }
@@ -242,44 +284,6 @@ export default class EasySpotify {
     )
     const data = handleResponse(response)
     return data.playlists
-  }
-
-  public async getBrowseListOfCategories(
-    options: { locale?: string; country?: string } & PagingRequestParams
-  ): Promise<PagingCategories> {
-    const response: AxiosResponse<any> = await this.buildRequest(
-      'browse/categories',
-      options
-    )
-    const data = handleResponse(response)
-    return data.categories
-  }
-
-  public async getBrowseFeaturedPlaylists(
-    options: {
-      locale?: string
-      country?: string
-      timestamp?: Date
-    } & PagingRequestParams
-  ): Promise<FeaturedPlaylists> {
-    if (options.timestamp) {
-      Object.assign(options, { timestamp: options.timestamp.toISOString() })
-    }
-    const response: AxiosResponse<any> = await this.buildRequest(
-      'browse/featured-playlists',
-      options
-    )
-    return handleResponse(response)
-  }
-
-  public async getBrowseNewReleases(
-    options: { country?: string } & PagingRequestParams
-  ): Promise<FeaturedAlbums> {
-    const response: AxiosResponse<any> = await this.buildRequest(
-      'browse/new-releases',
-      options
-    )
-    return handleResponse(response)
   }
 
   public async getBrowseRecommendations(
@@ -307,13 +311,30 @@ export default class EasySpotify {
     return handleResponse(response)
   }
 
-  public async getPlaylists(
-    userId?: string,
+  public async getBrowseRecommendationGenres(): Promise<string[]> {
+    const response: AxiosResponse<any> = await this.buildRequest(
+      'recommendations/available-genre-seeds'
+    )
+    const data = handleResponse(response)
+    return data.genres
+  }
+
+  public async getCurrentUserPlaylists(
     options?: PagingRequestParams
   ): Promise<PagingPlaylists> {
-    const endpoint = userId ? `users/${userId}/playlists` : 'me/playlists'
     const response: AxiosResponse<any> = await this.buildRequest(
-      endpoint,
+      'me/playlists',
+      options
+    )
+    return handleResponse(response)
+  }
+
+  public async getUserPlaylists(
+    userId: string,
+    options?: PagingRequestParams
+  ): Promise<PagingPlaylists> {
+    const response: AxiosResponse<any> = await this.buildRequest(
+      `users/${userId}/playlists`,
       options
     )
     return handleResponse(response)
@@ -327,6 +348,13 @@ export default class EasySpotify {
       `users/${userId}/playlists`,
       params,
       'POST'
+    )
+    return handleResponse(response)
+  }
+
+  public async getPlaylist(playlistId: string): Promise<Playlist> {
+    const response: AxiosResponse<any> = await this.buildRequest(
+      `playlists/${playlistId}`
     )
     return handleResponse(response)
   }
@@ -393,12 +421,17 @@ export default class EasySpotify {
           ? 'data'
           : 'params'
 
-        this.httpClient({
+        let request = {
           headers: this.buildHeaders(),
           method,
-          [payloadKey]: params,
           url: `${this.getApiUrl()}/${endpoint}`
-        }).then(resolve, e => {
+        }
+
+        if (params) {
+          request = { ...request, [payloadKey]: params }
+        }
+
+        this.httpClient(request).then(resolve, e => {
           const retryAfter = e.response?.headers
             ? e.response?.headers['retry-after']
             : null

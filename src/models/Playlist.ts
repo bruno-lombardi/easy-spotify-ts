@@ -1,3 +1,4 @@
+import { Followers } from '.'
 import { ExternalUrls } from './ExternalUrls'
 import { Image } from './Image'
 import { PagingPlaylists } from './Paging'
@@ -20,14 +21,13 @@ export interface SimplifiedPlaylist {
   id: string
   images: Image[]
   name: string
+  description: string
   owner: User
-  primary_color: null
-  public: any
+  public: boolean
   snapshot_id: string
   tracks: Tracks
   type: 'playlist'
   uri: string
-  description: string
 }
 export interface CreatePlaylistParams {
   name: string
@@ -41,4 +41,8 @@ export interface UpdatePlaylistParams {
   public?: boolean
   collaborative?: boolean
   description?: string
+}
+
+export interface Playlist extends SimplifiedPlaylist {
+  followers: Followers
 }
