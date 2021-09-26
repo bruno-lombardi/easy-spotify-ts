@@ -387,7 +387,6 @@ await spotify.uploadCustomPlaylistCoverImage('playlistid', base64Image)
 ```
 
 
-
 ## <a name="features"></a> Features to implement
 - [x] Support Search endpoint
 - [x] Support Artists endpoints
@@ -396,9 +395,9 @@ await spotify.uploadCustomPlaylistCoverImage('playlistid', base64Image)
 - [ ] Support Library endpoints
 - [ ] Support Personalization endpoints
 - [ ] Support Player endpoints
-- [ ] Support Playlists endpoints
+- [x] Support Playlists endpoints
 - [ ] Support Tracks endpoints
-- [ ] Support User Profiles endpoints
+- [x] Support User Profiles endpoints
 
 ## Authors
 
