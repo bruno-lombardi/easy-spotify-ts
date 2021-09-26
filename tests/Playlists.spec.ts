@@ -478,11 +478,17 @@ describe('Playlists', () => {
 
   describe('addPlaylistTracks', () => {
     beforeEach(() => {
-      httpClientStub.resolves({ status: 200 })
+      httpClientStub.resolves({
+        status: 200,
+        data: {
+          snapshot_id:
+            'JbtmHBDBAYu3/bt8BOXKjzKx3i0b6LCa/wVjyl6qQ2Yf6nFXkbmzuEa+ZI/U1yF+'
+        }
+      })
     })
 
     it('should call httpClient with correct settings', async () => {
-      await spotify.addPlaylistTracks('playlistid', ['uri1', 'url2'])
+      await spotify.addPlaylistTracks('playlistid', { uris: ['uri1', 'url2'] })
       expect(httpClientStub).to.have.been.calledWith({
         ...baseHttpClientConfig,
         method: 'POST',
@@ -490,21 +496,52 @@ describe('Playlists', () => {
         url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
       })
     })
+    it('should call httpClient with position when passing position', async () => {
+      await spotify.addPlaylistTracks('playlistid', {
+        uris: ['uri1', 'url2'],
+        position: 2
+      })
+      expect(httpClientStub).to.have.been.calledWith({
+        ...baseHttpClientConfig,
+        method: 'POST',
+        data: { uris: ['uri1', 'url2'], position: 2 },
+        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+      })
+    })
+
+    it('should return snapshot id when success', async () => {
+      const response = await spotify.addPlaylistTracks('playlistid', {
+        uris: ['uri1', 'url2']
+      })
+      expect(response).to.not.be.undefined
+      expect(response.snapshot_id).to.eql(
+        'JbtmHBDBAYu3/bt8BOXKjzKx3i0b6LCa/wVjyl6qQ2Yf6nFXkbmzuEa+ZI/U1yF+'
+      )
+    })
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.addPlaylistTracks('playlistid', ['uri1', 'url2'])).to
-        .throw
+      expect(() =>
+        spotify.addPlaylistTracks('playlistid', { uris: ['uri1', 'url2'] })
+      ).to.throw
     })
   })
 
   describe('replacePlaylistTracks', () => {
     beforeEach(() => {
-      httpClientStub.resolves({ status: 200 })
+      httpClientStub.resolves({
+        status: 200,
+        data: {
+          snapshot_id:
+            'JbtmHBDBAYu3/bt8BOXKjzKx3i0b6LCa/wVjyl6qQ2Yf6nFXkbmzuEa+ZI/U1yF+'
+        }
+      })
     })
 
     it('should call httpClient with correct settings', async () => {
-      await spotify.replacePlaylistTracks('playlistid', ['uri1', 'url2'])
+      await spotify.replacePlaylistTracks('playlistid', {
+        uris: ['uri1', 'url2']
+      })
       expect(httpClientStub).to.have.been.calledWith({
         ...baseHttpClientConfig,
         method: 'PUT',
@@ -513,10 +550,131 @@ describe('Playlists', () => {
       })
     })
 
+    it('should call httpClient with range params', async () => {
+      await spotify.replacePlaylistTracks('playlistid', {
+        uris: ['uri1', 'url2'],
+        insert_before: 2,
+        range_length: 2,
+        range_start: 0
+      })
+      expect(httpClientStub).to.have.been.calledWith({
+        ...baseHttpClientConfig,
+        method: 'PUT',
+        data: {
+          uris: ['uri1', 'url2'],
+          insert_before: 2,
+          range_length: 2,
+          range_start: 0
+        },
+        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+      })
+    })
+
+    it('should return snapshot id when success', async () => {
+      const response = await spotify.replacePlaylistTracks('playlistid', {
+        uris: ['uri1', 'url2']
+      })
+      expect(response).to.not.be.undefined
+      expect(response.snapshot_id).to.eql(
+        'JbtmHBDBAYu3/bt8BOXKjzKx3i0b6LCa/wVjyl6qQ2Yf6nFXkbmzuEa+ZI/U1yF+'
+      )
+    })
+
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
       expect(() =>
-        spotify.replacePlaylistTracks('playlistid', ['uri1', 'url2'])
+        spotify.replacePlaylistTracks('playlistid', { uris: ['uri1', 'url2'] })
+      ).to.throw
+    })
+  })
+  describe('removeTracksFromPlaylist', () => {
+    beforeEach(() => {
+      httpClientStub.resolves({
+        status: 200,
+        data: {
+          snapshot_id:
+            'JbtmHBDBAYu3/bt8BOXKjzKx3i0b6LCa/wVjyl6qQ2Yf6nFXkbmzuEa+ZI/U1yF+'
+        }
+      })
+    })
+
+    it('should call httpClient with correct settings', async () => {
+      await spotify.removeTracksFromPlaylist('playlistid', {
+        uris: ['uri1', 'url2']
+      })
+      expect(httpClientStub).to.have.been.calledWith({
+        ...baseHttpClientConfig,
+        method: 'DELETE',
+        data: { tracks: [{ uri: 'uri1' }, { uri: 'url2' }] },
+        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+      })
+    })
+
+    it('should call httpClient with snapshot id', async () => {
+      await spotify.removeTracksFromPlaylist('playlistid', {
+        uris: ['uri1', 'url2'],
+        snapshot_id: 'snapshot_id'
+      })
+      expect(httpClientStub).to.have.been.calledWith({
+        ...baseHttpClientConfig,
+        method: 'DELETE',
+        data: {
+          tracks: [{ uri: 'uri1' }, { uri: 'url2' }],
+          snapshot_id: 'snapshot_id'
+        },
+        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+      })
+    })
+
+    it('should return snapshot id when success', async () => {
+      const response = await spotify.removeTracksFromPlaylist('playlistid', {
+        uris: ['uri1', 'url2']
+      })
+      expect(response).to.not.be.undefined
+      expect(response.snapshot_id).to.eql(
+        'JbtmHBDBAYu3/bt8BOXKjzKx3i0b6LCa/wVjyl6qQ2Yf6nFXkbmzuEa+ZI/U1yF+'
+      )
+    })
+
+    it('should throw err if response fails', async () => {
+      httpClientStub.rejects({ response: { status: 400 } })
+      expect(() =>
+        spotify.removeTracksFromPlaylist('playlistid', {
+          uris: ['uri1', 'url2']
+        })
+      ).to.throw
+    })
+  })
+  describe('uploadCustomPlaylistCoverImage', () => {
+    beforeEach(() => {
+      httpClientStub.resolves({
+        status: 202
+      })
+    })
+
+    it('should call httpClient with correct settings', async () => {
+      await spotify.uploadCustomPlaylistCoverImage('playlistid', 'base64')
+      expect(httpClientStub).to.have.been.calledWith({
+        headers: {
+          Authorization: 'Bearer token',
+          'Content-Type': 'image/jpeg'
+        },
+        method: 'PUT',
+        data: 'base64',
+        url: 'https://api.spotify.com/v1/playlists/playlistid/images'
+      })
+    })
+
+    it('should not throw when success and status is 202', async () => {
+      expect(() =>
+        spotify.uploadCustomPlaylistCoverImage('playlistid', 'base64')
+      ).not.to.throw
+    })
+
+    it('should throw err if response fails', async () => {
+      httpClientStub.rejects({ response: { status: 400 } })
+      expect(() =>
+        spotify.uploadCustomPlaylistCoverImage('playlistid', 'base64')
       ).to.throw
     })
   })

@@ -10,6 +10,7 @@ import {
   Artist,
   FeaturedAlbums,
   FeaturedPlaylists,
+  Image,
   PagingAlbums,
   PagingArtists,
   PagingCategories,
@@ -26,11 +27,15 @@ import { GetAlbumOptions } from './models/Album'
 import { GetArtistAlbumsOptions } from './models/Artist'
 import { PagingRequestParams } from './models/Paging'
 import {
+  AddPlaylistTracksParams,
   CreatePlaylistParams,
   Playlist,
+  RemovePlaylistTracksParams,
+  ReplacePlaylistTracksParams,
   UpdatePlaylistParams
 } from './models/Playlist'
 import { OptionalRequestParams, SearchRequestParams } from './models/Request'
+import Snapshot from './models/Snapshot'
 import { handleResponse } from './utils'
 
 export default class EasySpotify {
@@ -373,11 +378,11 @@ export default class EasySpotify {
 
   public async addPlaylistTracks(
     playlistId: string,
-    uris: string[]
-  ): Promise<void> {
+    params: AddPlaylistTracksParams
+  ): Promise<Snapshot> {
     const response = await this.buildRequest(
       `playlists/${playlistId}/tracks`,
-      { uris },
+      params,
       'POST'
     )
     return handleResponse(response)
@@ -385,12 +390,49 @@ export default class EasySpotify {
 
   public async replacePlaylistTracks(
     playlistId: string,
-    uris: string[]
-  ): Promise<void> {
+    params: ReplacePlaylistTracksParams
+  ): Promise<Snapshot> {
     const response = await this.buildRequest(
       `playlists/${playlistId}/tracks`,
-      { uris },
+      params,
       'PUT'
+    )
+    return handleResponse(response)
+  }
+
+  public async removeTracksFromPlaylist(
+    playlistId: string,
+    params: RemovePlaylistTracksParams
+  ): Promise<Snapshot> {
+    let requestParams = {
+      tracks: params.uris.map(uri => ({ uri }))
+    } as any
+    if (params.snapshot_id) {
+      requestParams = { ...requestParams, snapshot_id: params.snapshot_id }
+    }
+
+    const response = await this.buildRequest(
+      `playlists/${playlistId}/tracks`,
+      requestParams,
+      'DELETE'
+    )
+    return handleResponse(response)
+  }
+
+  public async getPlaylistCoverImage(playlistId: string): Promise<Image[]> {
+    const response = await this.buildRequest(`playlists/${playlistId}/images`)
+    return handleResponse(response)
+  }
+
+  public async uploadCustomPlaylistCoverImage(
+    playlistId: string,
+    imageBase64: string
+  ): Promise<void> {
+    const response = await this.buildRequest(
+      `playlists/${playlistId}/images`,
+      imageBase64,
+      'PUT',
+      { 'Content-Type': 'image/jpeg' }
     )
     return handleResponse(response)
   }
@@ -413,16 +455,19 @@ export default class EasySpotify {
   public buildRequest(
     endpoint: string,
     params?: AxiosRequestConfig['params'],
-    method: Method = 'GET'
+    method: Method = 'GET',
+    headers?: Record<string, any>
   ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       try {
-        const payloadKey = ['PUT', 'POST', 'PATCH'].some(m => m === method)
+        const payloadKey = ['PUT', 'POST', 'PATCH', 'DELETE'].some(
+          m => m === method
+        )
           ? 'data'
           : 'params'
 
         let request = {
-          headers: this.buildHeaders(),
+          headers: { ...this.buildHeaders(), ...headers },
           method,
           url: `${this.getApiUrl()}/${endpoint}`
         }

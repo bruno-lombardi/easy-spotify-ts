@@ -339,6 +339,52 @@ await spotify.updatePlaylistDetails('playlistid', {
   public: false
 })
 ```
+### addPlaylistTracks(playlistId: string, params: AddPlaylistTracksParams): Promise\<Snapshot\>
+This method lets you add tracks to a playlist.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-add-tracks-to-playlist)
+```ts
+let tracks = ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh','spotify:episode:512ojhOuo1ktJprKbVcKyQ']
+const response = await spotify.addPlaylistTracks('playlistid',{ uris: tracks })
+// console.log(response.snapshot_id)
+```
+### replacePlaylistTracks(playlistId: string, params: ReplacePlaylistTracksParams): Promise\<Snapshot\>
+This method lets you reorder or replace items in a playlist depending on the parameters passed. To reorder items, include range_start, insert_before, range_length and snapshot_id in the request’s body. To replace items, include uris as either a query parameter or in the request’s body. Replacing items in a playlist will overwrite its existing items. This operation can be used for replacing or clearing items in a playlist.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-reorder-or-replace-playlists-tracks)
+```ts
+let tracks = ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh','spotify:episode:512ojhOuo1ktJprKbVcKyQ']
+const response = await spotify.replacePlaylistTracks('playlistid', {
+  uris: tracks,
+  insert_before: 2,
+  range_length: 2,
+  range_start: 0
+})
+// console.log(response.snapshot_id)
+```
+### removeTracksFromPlaylist(playlistId: string, params: RemovePlaylistTracksParams): Promise\<Snapshot\>
+This method lets you remove one or more items from a user’s playlist.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-remove-tracks-playlist)
+```ts
+let tracks = ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh','spotify:episode:512ojhOuo1ktJprKbVcKyQ']
+const response = await spotify.removeTracksFromPlaylist('playlistid', { uris: tracks })
+// console.log(response.snapshot_id)
+```
+### getPlaylistCoverImage(playlistId: string): Promise\<Image[]\>
+This method returns the current image associated with a specific playlist.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-playlist-cover)
+```ts
+const response = await spotify.getPlaylistCoverImage('playlistid')
+// console.log(response[0].width)
+// console.log(response[0].url)
+```
+### uploadCustomPlaylistCoverImage(playlistId: string, imageBase64: string): Promise\<void\>
+This method replace the image used to represent a specific playlist.
+Note: you should upload a base64 encoded image. Remove the preceeding "data:image/jpeg;base64"
+that is usually present in a base64 url.
+> Check official [documentation page](https://developer.spotify.com/documentation/web-api/reference/#endpoint-upload-custom-playlist-cover)
+```ts
+const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAA...'
+await spotify.uploadCustomPlaylistCoverImage('playlistid', base64Image)
+```
 
 
 
