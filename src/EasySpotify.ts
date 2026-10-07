@@ -5,6 +5,7 @@ import axios, {
   Method
 } from 'axios'
 import EasySpotifyConfig from './EasySpotifyConfig'
+import { PlaylistSync } from './PlaylistSync'
 import { SpotifyUnsupportedEndpointError } from './SpotifyError'
 import {
   Album,
@@ -49,6 +50,8 @@ import Snapshot from './models/Snapshot'
 import { handleResponse } from './utils'
 
 export default class EasySpotify {
+  public readonly playlists = new PlaylistSync(this)
+
   public config: EasySpotifyConfig
 
   public httpClient: AxiosInstance

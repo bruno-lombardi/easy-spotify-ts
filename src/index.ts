@@ -2,6 +2,7 @@ import EasySpotify from './EasySpotify'
 import EasySpotifyConfig from './EasySpotifyConfig'
 
 export { EasySpotify, EasySpotifyConfig }
+export * from './PlaylistSync'
 export { SpotifyError, SpotifyUnsupportedEndpointError } from './SpotifyError'
 export type { EasySpotifyOptions, SpotifyQuotaMode } from './EasySpotifyConfig'
 export type { Episode } from './models/Episode'

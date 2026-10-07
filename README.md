@@ -11,6 +11,10 @@ Node 24 is recommended. CommonJS and native ESM named imports are supported.
 
 ## Usage
 
+GitHub Actions validates changes and automates version bumps and npm publication
+through release PRs. See [release setup and recovery](docs/releases.md) to enable
+the npm Trusted Publisher and configure GitHub permissions.
+
 ```sh
 npm install easy-spotify-ts
 ```
@@ -31,6 +35,47 @@ console.log(profile.account_id, tracks.items, playlists.items)
 ```
 
 ## Playlists
+
+### Synchronization
+
+Read a playlist, preview the operations, then apply the desired ordered contents:
+
+```ts
+const plan = await spotify.playlists.planSync('playlist-id', {
+  uris: [
+    'spotify:track:4iV5W9uYEdYUVa79Axb7Rh',
+    'spotify:episode:512ojhOuo1ktJprKbVcKyQ'
+  ],
+  preserveDuplicates: true // default; false keeps the first occurrence
+})
+
+console.log(plan.summary, plan.operations) // planning never writes
+
+const result = await spotify.playlists.apply(plan, {
+  onProgress: progress => console.log(progress.completedOperations)
+})
+
+// Or plan and execute in one call:
+await spotify.playlists.sync('playlist-id', { uris: desiredUris })
+```
+
+Synchronization handles pagination, batches up to 100 URIs, and uses incremental
+removal, insertion and reordering. An identical playlist requires no writes.
+Plans are immutable and must be applied through the same client that created them.
+An empty desired list clears the playlist. Local and unavailable items cause
+planning to fail rather than being silently discarded.
+
+Snapshot checks detect concurrent changes between steps; Spotify does not provide
+an atomic transaction for the entire workflow. Execution errors expose completed
+operations through `PlaylistSyncExecutionError.progress` and the original error
+through `cause`. Create a fresh plan after a failure; do not replay an old plan.
+`AbortSignal` cancellation is checked between requests. Already sent requests and
+completed writes are not rolled back.
+
+See [synchronization details](docs/playlist-sync.md) for permissions, progress,
+request counts and duplicate handling.
+
+### Individual operations
 
 ```ts
 const playlist = await spotify.createPlaylist({
