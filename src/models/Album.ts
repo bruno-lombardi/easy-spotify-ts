@@ -69,7 +69,7 @@ export class Album implements SimplifiedAlbum {
     this.album_type = response.album_type
     this.artists = response.artists
     this.available_markets = response.available_markets
-    this.copyrights = response.available_markets
+    this.copyrights = response.copyrights
     this.external_ids = response.external_ids
     this.external_urls = response.external_urls
     this.genres = response.genres
@@ -80,6 +80,7 @@ export class Album implements SimplifiedAlbum {
     this.popularity = response.popularity
     this.release_date = response.release_date
     this.release_date_precision = response.release_date_precision
+    this.restrictions = response.restrictions
     this.tracks = response.tracks
     this.type = response.type
     this.uri = response.uri

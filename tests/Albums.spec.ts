@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
 import { SinonStub, stub } from 'sinon'
 import 'mocha'
 import { expect, use } from 'chai'
-import sinonChai = require('sinon-chai')
+import sinonChai from 'sinon-chai'
 import EasySpotify from '../src/EasySpotify'
 import EasySpotifyConfig from '../src/EasySpotifyConfig'
 import { Album, PagingTracks } from '../src/models'
@@ -56,7 +57,7 @@ describe('Albums', () => {
     it('should not get a album if invalid id', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
       id = 'invalidId'
-      expect(() => spotify.getAlbum(id)).to.throw
+      await assert.rejects(async () => spotify.getAlbum(id))
     })
   })
 
@@ -101,7 +102,7 @@ describe('Albums', () => {
     it('should throw error if invalid ids', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
       ids = ['invalid', 'id']
-      expect(() => spotify.getAlbums(ids)).to.throw
+      await assert.rejects(async () => spotify.getAlbums(ids))
     })
   })
 
@@ -147,7 +148,7 @@ describe('Albums', () => {
     it('should not get tracks for invalid album', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
       id = 'invalid'
-      expect(() => spotify.getAlbumTracks(id)).to.throw
+      await assert.rejects(async () => spotify.getAlbumTracks(id))
     })
   })
 })

@@ -9,9 +9,9 @@ export interface RecommendationsSeed {
   type: 'artist' | 'genre' | 'track'
 }
 export class Recommendations {
-  seeds: RecommendationsSeed[]
+  declare seeds: RecommendationsSeed[]
 
-  tracks: SimplifiedTrack[]
+  declare tracks: SimplifiedTrack[]
 }
 export interface RecommendationsQuery {
   limit?: number

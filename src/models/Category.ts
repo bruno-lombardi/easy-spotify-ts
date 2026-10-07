@@ -1,13 +1,13 @@
 import { Image } from './Image'
 
 export class Category {
-  href: string
+  declare href: string
 
-  icons: Image[]
+  declare icons: Image[]
 
-  id: string
+  declare id: string
 
-  name: string
+  declare name: string
 
   constructor(response: any) {
     Object.assign(this, response)

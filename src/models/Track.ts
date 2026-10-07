@@ -41,7 +41,7 @@ export class Track {
 
   public restrictions: any
 
-  public popularity: boolean
+  public popularity: number
 
   public preview_url: string
 

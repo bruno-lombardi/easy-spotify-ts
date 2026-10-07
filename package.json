@@ -5,67 +5,48 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "axios": "^0.21.4"
+    "axios": "^1.20.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "docs/maintenance-audit.md"
   ],
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "14.17.6",
-    "@types/sinon": "^10.0.3",
-    "@types/sinon-chai": "^3.2.1",
-    "@typescript-eslint/eslint-plugin": "^4.31.1",
-    "@typescript-eslint/parser": "^4.31.1",
-    "chai": "^4.2.0",
-    "codecov": "^3.2.0",
-    "eslint": "^7.2.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-chai-expect": "^2.2.0",
-    "eslint-plugin-chai-friendly": "^0.7.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-mocha": "^9.0.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "mocha": "^9.1.1",
-    "nyc": "^15.0.0",
-    "prettier": "^2.4.1",
-    "rimraf": "^3.0.2",
-    "sinon": "^11.1.2",
-    "sinon-chai": "^3.3.0",
-    "ts-loader": "^9.2.6",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.3"
+    "@eslint/js": "^10.0.1",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.0.0",
+    "@types/sinon": "^22.0.0",
+    "@types/sinon-chai": "^4.0.0",
+    "c8": "^12.0.0",
+    "chai": "^6.3.0",
+    "eslint": "^10.12.0",
+    "mocha": "^12.0.3",
+    "prettier": "^3.9.9",
+    "sinon": "^22.1.0",
+    "sinon-chai": "^4.0.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.0",
+    "typescript-eslint": "^8.71.1"
   },
   "scripts": {
-    "clear": "rimraf ./dist",
-    "example": "node dist/examples/app.js",
-    "build:tsc": "yarn run clear && tsc",
-    "build:example": "rimraf ./example/dist && tsc ./examples/app.ts --outDir ./examples/dist --lib es2015,es6,dom",
-    "build:all": "yarn run build:tsc && yarn run build:example",
-    "dev": "tsc -w",
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
-    "test:tdd": "mocha -r ts-node/register tests/**/*.spec.ts --watch --watch-files src/**/*.ts,tests/**/*.ts",
-    "lint": "eslint '*/**/*.{js,ts}' --quiet --fix",
-    "prepush": "yarn run lint",
-    "test:coverage": "nyc yarn test",
-    "test:report": "nyc report --reporter=text-lcov > coverage.lcov"
-  },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text",
-      "html"
-    ],
-    "exclude": [
-      "tests/**"
-    ]
+    "clear": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clear && tsc -p tsconfig.json",
+    "build:tsc": "npm run build",
+    "build:example": "tsc -p tsconfig.check.json",
+    "build:all": "npm run build && npm run build:example",
+    "example": "tsx examples/app.ts",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.check.json",
+    "test": "tsx node_modules/mocha/bin/mocha.js \"tests/**/*.spec.ts\"",
+    "test:tdd": "npm test -- --watch --watch-files \"src/**/*.ts,tests/**/*.ts\"",
+    "lint": "eslint src tests examples",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:coverage": "c8 --include=\"src/**/*.ts\" --all --reporter=text --reporter=lcov --reporter=html npm test",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build",
+    "prepack": "npm run check"
   },
   "repository": {
     "type": "git",
@@ -84,5 +65,9 @@
   "bugs": {
     "url": "https://github.com/bruno-lombardi/easy-spotify-ts/issues"
   },
-  "homepage": "https://github.com/bruno-lombardi/easy-spotify-ts#readme"
+  "homepage": "https://github.com/bruno-lombardi/easy-spotify-ts#readme",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "type": "commonjs"
 }

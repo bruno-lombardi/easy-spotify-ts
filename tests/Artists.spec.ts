@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
 import { SinonStub, stub } from 'sinon'
 import 'mocha'
 import { expect, use } from 'chai'
-import sinonChai = require('sinon-chai')
+import sinonChai from 'sinon-chai'
 import EasySpotify from '../src/EasySpotify'
 import EasySpotifyConfig from '../src/EasySpotifyConfig'
 import { Artist, PagingAlbums, Track } from '../src/models'
@@ -59,7 +60,7 @@ describe('Artists', () => {
     it('should not get artist if invalid id', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
       id = 'invalid'
-      expect(() => spotify.getArtist(id)).to.throw
+      await assert.rejects(async () => spotify.getArtist(id))
     })
   })
 
@@ -117,7 +118,7 @@ describe('Artists', () => {
     it('should not get artists if invalid ids', async () => {
       ids = ['invalid', 'id']
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getArtists(ids)).to.throw
+      await assert.rejects(async () => spotify.getArtists(ids))
     })
   })
 
@@ -175,7 +176,7 @@ describe('Artists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getArtistAlbums('invalid_id')).to.throw
+      await assert.rejects(async () => spotify.getArtistAlbums('invalid_id'))
     })
   })
 
@@ -223,7 +224,7 @@ describe('Artists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getArtistTopTracks('invalid_id')).to.throw
+      await assert.rejects(async () => spotify.getArtistTopTracks('invalid_id'))
     })
   })
 
@@ -283,7 +284,9 @@ describe('Artists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getArtistRelatedArtists('invalid_id')).to.throw
+      await assert.rejects(async () =>
+        spotify.getArtistRelatedArtists('invalid_id')
+      )
     })
   })
 })

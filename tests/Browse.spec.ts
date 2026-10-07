@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
 import { SinonStub, stub } from 'sinon'
 import 'mocha'
 import { expect, use } from 'chai'
-import sinonChai = require('sinon-chai')
+import sinonChai from 'sinon-chai'
 import EasySpotify from '../src/EasySpotify'
 import EasySpotifyConfig from '../src/EasySpotifyConfig'
 import {
@@ -76,11 +77,11 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getBrowseCategory('party', {
           country: 'US'
         })
-      ).to.throw
+      )
     })
   })
 
@@ -134,12 +135,12 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getBrowseCategoryPlaylists('party', {
           country: 'BR',
           limit: 20
         })
-      ).to.throw
+      )
     })
   })
 
@@ -188,8 +189,9 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getBrowseListOfCategories({ offset: 0, limit: 10 }))
-        .to.throw
+      await assert.rejects(async () =>
+        spotify.getBrowseListOfCategories({ offset: 0, limit: 10 })
+      )
     })
   })
 
@@ -269,13 +271,13 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getBrowseFeaturedPlaylists({
           offset: 0,
           limit: 10,
           timestamp: new Date('2020-01-01')
         })
-      ).to.throw
+      )
     })
   })
 
@@ -329,12 +331,12 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getBrowseNewReleases({
           offset: 0,
           limit: 10
         })
-      ).to.throw
+      )
     })
   })
 
@@ -445,12 +447,12 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getBrowseRecommendations({
           seed_tracks: ['4NHQUGzhtTLFvgF5SZesLK', '1VBflYyxBhnDc9uVib98rw'],
           target_loudness: 0.2
         })
-      ).to.throw
+      )
     })
   })
 
@@ -481,7 +483,7 @@ describe('Browse', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getBrowseRecommendationGenres()).to.throw
+      await assert.rejects(async () => spotify.getBrowseRecommendationGenres())
     })
   })
 })

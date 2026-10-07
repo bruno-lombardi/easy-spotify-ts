@@ -43,7 +43,7 @@ export class Artist implements SimplifiedArtist {
     this.id = response.id
     this.name = response.name
     this.type = response.type
-    this.uri = response.type
+    this.uri = response.uri
     this.followers = response.followers
     this.genres = response.genres
     this.images = response.images

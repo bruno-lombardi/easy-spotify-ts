@@ -3,7 +3,7 @@ export class SpotifyError extends Error {
 
   constructor(error: { message?: string; status?: number }) {
     super(error.message)
-    this.status = error.status
+    this.status = error.status ?? 0
     this.name = 'SpotifyError'
   }
 }

@@ -247,12 +247,13 @@ export default class EasySpotify {
       timestamp?: Date
     } & PagingRequestParams
   ): Promise<FeaturedPlaylists> {
-    if (options.timestamp) {
-      Object.assign(options, { timestamp: options.timestamp.toISOString() })
+    const params = {
+      ...options,
+      ...(options.timestamp && { timestamp: options.timestamp.toISOString() })
     }
     const response: AxiosResponse<any> = await this.buildRequest(
       'browse/featured-playlists',
-      options
+      params
     )
     return handleResponse(response)
   }
@@ -294,24 +295,15 @@ export default class EasySpotify {
   public async getBrowseRecommendations(
     query: RecommendationsQuery
   ): Promise<Recommendations> {
-    if (query.seed_artists && query.seed_artists.length) {
-      Object.assign(query, {
-        seed_artists: query.seed_artists.join(',')
-      })
-    }
-    if (query.seed_genres && query.seed_genres.length) {
-      Object.assign(query, {
-        seed_genres: query.seed_genres.join(',')
-      })
-    }
-    if (query.seed_tracks && query.seed_tracks.length) {
-      Object.assign(query, {
-        seed_tracks: query.seed_tracks.join(',')
-      })
+    const params: Record<string, any> = { ...query }
+    for (const key of ['seed_artists', 'seed_genres', 'seed_tracks'] as const) {
+      if (query[key]?.length) {
+        params[key] = query[key].join(',')
+      }
     }
     const response: AxiosResponse<any> = await this.buildRequest(
       'recommendations',
-      query
+      params
     )
     return handleResponse(response)
   }
@@ -452,46 +444,50 @@ export default class EasySpotify {
     return handleResponse(response)
   }
 
-  public buildRequest(
+  public async buildRequest(
     endpoint: string,
     params?: AxiosRequestConfig['params'],
     method: Method = 'GET',
     headers?: Record<string, any>
-  ): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        const payloadKey = ['PUT', 'POST', 'PATCH', 'DELETE'].some(
-          m => m === method
-        )
-          ? 'data'
-          : 'params'
+  ): Promise<AxiosResponse<any>> {
+    const payloadKey = ['PUT', 'POST', 'PATCH', 'DELETE'].includes(
+      method.toUpperCase()
+    )
+      ? 'data'
+      : 'params'
 
-        let request = {
-          headers: { ...this.buildHeaders(), ...headers },
-          method,
-          url: `${this.getApiUrl()}/${endpoint}`
-        }
-
-        if (params) {
-          request = { ...request, [payloadKey]: params }
-        }
-
-        this.httpClient(request).then(resolve, e => {
-          const retryAfter = e.response?.headers
-            ? e.response?.headers['retry-after']
-            : null
-          if (retryAfter) {
-            setTimeout(() => {
-              this.buildRequest(endpoint, params, method).then(resolve, reject)
-            }, (retryAfter + 1) * 1000)
-          } else {
-            reject(e)
-          }
-        })
-      } catch (e) {
-        reject(e)
+    // Spotify returns 429 through validateStatus, so retry resolved responses too.
+    // Limit retries to avoid an unbounded request loop.
+    for (let attempt = 0; ; attempt += 1) {
+      const request: AxiosRequestConfig = {
+        headers: { ...this.buildHeaders(), ...headers },
+        method,
+        url: `${this.getApiUrl()}/${endpoint}`,
+        ...(params !== undefined && { [payloadKey]: params })
       }
-    })
+      let response: AxiosResponse<any>
+      try {
+        response = await this.httpClient(request)
+      } catch (error) {
+        if (!axios.isAxiosError(error) || error.response?.status !== 429) {
+          throw error
+        }
+        response = error.response
+      }
+      const retryAfter = response.headers?.['retry-after']
+      const seconds = Number(retryAfter)
+      if (
+        response.status !== 429 ||
+        attempt >= 2 ||
+        retryAfter == null ||
+        !Number.isFinite(seconds) ||
+        seconds < 0 ||
+        seconds > 2147483
+      ) {
+        return response
+      }
+      await new Promise(resolve => setTimeout(resolve, seconds * 1000))
+    }
   }
 
   private buildHeaders(): Record<string, any> {

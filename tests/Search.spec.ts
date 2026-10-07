@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
 import { SinonStub, stub } from 'sinon'
 import 'mocha'
 import { expect, use } from 'chai'
-import sinonChai = require('sinon-chai')
+import sinonChai from 'sinon-chai'
 import EasySpotify from '../src/EasySpotify'
 import EasySpotifyConfig from '../src/EasySpotifyConfig'
 import {
@@ -76,11 +77,11 @@ describe('Albums', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.searchAlbums('Rock', {
           limit: 2
         })
-      ).to.throw
+      )
     })
   })
 
@@ -130,7 +131,7 @@ describe('Albums', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.searchArtists('invalid_search')).to.throw
+      await assert.rejects(async () => spotify.searchArtists('invalid_search'))
     })
   })
 
@@ -179,7 +180,7 @@ describe('Albums', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.searchPlaylists('abba')).to.throw
+      await assert.rejects(async () => spotify.searchPlaylists('abba'))
     })
   })
 
@@ -229,7 +230,7 @@ describe('Albums', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.searchTracks('abba')).to.throw
+      await assert.rejects(async () => spotify.searchTracks('abba'))
     })
   })
 
@@ -277,7 +278,9 @@ describe('Albums', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.search('abba', { type: 'artist' })).to.throw
+      await assert.rejects(async () =>
+        spotify.search('abba', { type: 'artist' })
+      )
     })
   })
 })

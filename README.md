@@ -3,12 +3,33 @@
   <img><a href="https://nodei.co/npm/easy-spotify-ts/"><img src="https://nodei.co/npm/easy-spotify-ts.png"></a>
 </p>
 
-[![Build Status](https://app.travis-ci.com/bruno-lombardi/easy-spotify-ts.svg?branch=master)](https://app.travis-ci.com/bruno-lombardi/easy-spotify-ts)
-[![codecov](https://codecov.io/gh/bruno-lombardi/easy-spotify-ts/branch/master/graph/badge.svg)](https://codecov.io/gh/bruno-lombardi/easy-spotify-ts)
+[![CI](https://github.com/bruno-lombardi/easy-spotify-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/bruno-lombardi/easy-spotify-ts/actions/workflows/ci.yml)
 
-This is a Javascript library written in Typescript that wraps [Spotify Web API](https://developer.spotify.com/documentation/web-api/) to make your spotify responses and requests benefit from autocompletion. It's still not published and in **development**. See [features list](#features) to check what else I plan to add to this library.
+This is a Javascript library written in Typescript that wraps [Spotify Web API](https://developer.spotify.com/documentation/web-api/) to make your spotify responses and requests benefit from autocompletion. The repository is undergoing maintenance; this update has not been published to npm. See [features list](#features) to check what else I plan to add to this library.
 
 ![Demo](demo.gif)
+
+## Maintenance status
+
+Development requires Node.js **>=22.13.0**; Node 24 is recommended (`.nvmrc`).
+The package retains CommonJS output and named imports. This checkout includes
+updated tooling and correctness fixes, but the API methods below are a **legacy
+reference**, not a guarantee of current Spotify availability.
+
+Spotify has restricted or replaced several endpoints, including recommendations
+and playlist operations. See the [maintenance audit and next-release priorities](docs/maintenance-audit.md)
+for the affected methods and links to official migration guidance.
+
+```sh
+npm ci
+npm run check
+npm run test:coverage
+npm pack --dry-run
+```
+
+`npm run lint` checks without modifying files; use `npm run lint:fix` or
+`npm run format` to apply changes. `npm pack` validates and builds automatically.
+Generated `dist/` and `examples/dist/` files are no longer maintained in Git.
 
 ## Installation and Usage
 This library is lightweight and only have one external dependency, which is axios, a powerful HTTP requests library. Also, if you like **type hints**, or **intellisense**, with easy-spotify-ts you have them for responses that come from Spotify Web API.
@@ -29,10 +50,10 @@ import { EasySpotify, EasySpotifyConfig } from 'easy-spotify-ts';
 
 const spotify = new EasySpotify(new EasySpotifyConfig("your-api-token"));
 
-// Get multiple albums!
-spotify.getAlbums(["382ObEPsp2rxGrnsizN5TX", "1A2GTWGtFfWp7KSQTwWOyo"], {market: "ES"}).then((albums) => {
-  // do something with albums
-  console.log(albums);
+// Get an album!
+spotify.getAlbum("382ObEPsp2rxGrnsizN5TX", {market: "ES"}).then((album) => {
+  // do something with the album
+  console.log(album);
 }).catch((error) => {
   // catch an error, like invalid token or invalid request
   console.log(error);

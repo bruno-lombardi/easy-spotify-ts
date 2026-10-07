@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
 import { SinonStub, stub } from 'sinon'
 import 'mocha'
 import { expect, use } from 'chai'
-import sinonChai = require('sinon-chai')
+import sinonChai from 'sinon-chai'
 import EasySpotify from '../src/EasySpotify'
 import EasySpotifyConfig from '../src/EasySpotifyConfig'
 
@@ -186,12 +187,12 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getCurrentUserPlaylists({
           limit: 9,
           offset: 0
         })
-      ).to.throw
+      )
     })
   })
   describe('getUserPlaylists', () => {
@@ -354,12 +355,12 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.getUserPlaylists('wizzlersmate', {
           limit: 9,
           offset: 0
         })
-      ).to.throw
+      )
     })
   })
 
@@ -400,14 +401,14 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.createPlaylist('wizzlersmate', {
           name: 'Playlist',
           description: 'Desc',
           collaborative: false,
           public: true
         })
-      ).to.throw
+      )
     })
   })
   describe('getPlaylist', () => {
@@ -434,7 +435,9 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() => spotify.getPlaylist('59ZbFPES4DQwEjBpWHzrtC')).to.throw
+      await assert.rejects(async () =>
+        spotify.getPlaylist('59ZbFPES4DQwEjBpWHzrtC')
+      )
     })
   })
 
@@ -465,14 +468,14 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.updatePlaylistDetails('playlistid', {
           name: 'New Playlist',
           description: 'New Desc',
           collaborative: true,
           public: false
         })
-      ).to.throw
+      )
     })
   })
 
@@ -521,9 +524,9 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.addPlaylistTracks('playlistid', { uris: ['uri1', 'url2'] })
-      ).to.throw
+      )
     })
   })
 
@@ -582,9 +585,9 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.replacePlaylistTracks('playlistid', { uris: ['uri1', 'url2'] })
-      ).to.throw
+      )
     })
   })
   describe('removeTracksFromPlaylist', () => {
@@ -638,11 +641,11 @@ describe('Playlists', () => {
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.removeTracksFromPlaylist('playlistid', {
           uris: ['uri1', 'url2']
         })
-      ).to.throw
+      )
     })
   })
   describe('uploadCustomPlaylistCoverImage', () => {
@@ -666,16 +669,16 @@ describe('Playlists', () => {
     })
 
     it('should not throw when success and status is 202', async () => {
-      expect(() =>
+      await assert.doesNotReject(async () =>
         spotify.uploadCustomPlaylistCoverImage('playlistid', 'base64')
-      ).not.to.throw
+      )
     })
 
     it('should throw err if response fails', async () => {
       httpClientStub.rejects({ response: { status: 400 } })
-      expect(() =>
+      await assert.rejects(async () =>
         spotify.uploadCustomPlaylistCoverImage('playlistid', 'base64')
-      ).to.throw
+      )
     })
   })
 
@@ -698,7 +701,7 @@ describe('Playlists', () => {
         status: 400,
         data: { error: { status: 400, message: 'error' } }
       })
-      expect(() => spotify.unfollowPlaylist('playlistid')).to.throw
+      await assert.rejects(async () => spotify.unfollowPlaylist('playlistid'))
     })
   })
 })

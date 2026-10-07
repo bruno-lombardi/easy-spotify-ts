@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
 import { expect, use } from 'chai'
 import 'mocha'
 import { SinonStub, stub } from 'sinon'
-import sinonChai = require('sinon-chai')
+import sinonChai from 'sinon-chai'
 
 import EasySpotify from '../src/EasySpotify'
 import EasySpotifyConfig from '../src/EasySpotifyConfig'
@@ -134,7 +135,7 @@ describe('EasySpotify', () => {
           status: 400,
           data: { error: { status: 400, message: 'error' } }
         })
-        expect(() => spotify.getUserProfile('playlistid')).to.throw
+        await assert.rejects(async () => spotify.getUserProfile('playlistid'))
       })
 
       it('should return user profile when success', async () => {

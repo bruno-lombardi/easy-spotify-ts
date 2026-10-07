@@ -18,6 +18,6 @@ describe('Utils', () => {
       status: 400
     } as AxiosResponse
 
-    expect(() => handleResponse(response)).to.throw
+    expect(() => handleResponse(response)).to.throw()
   })
 })
