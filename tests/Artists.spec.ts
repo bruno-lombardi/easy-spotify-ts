@@ -20,7 +20,9 @@ describe('Artists', () => {
   let httpClientStub: SinonStub
 
   beforeEach(() => {
-    spotify = new EasySpotify(new EasySpotifyConfig('token'))
+    spotify = new EasySpotify(
+      new EasySpotifyConfig('token', undefined, { quotaMode: 'extended' })
+    )
     httpClientStub = stub(spotify, 'httpClient')
   })
 
@@ -72,39 +74,21 @@ describe('Artists', () => {
     ]
 
     beforeEach(() => {
-      httpClientStub.resolves({
-        data: {
-          artists: [
-            {
-              id: '0OdUWJ0sBjDrqHygGUXeCF',
-              name: 'Band of Horses',
-              popularity: 14
-            },
-            {
-              id: '3dBVyJ7JuOMt4GE9607Qin',
-              name: 'T. Rex',
-              popularity: 62
-            },
-            {
-              id: '0oSGxfWSnnOXhD2fKuz2Gy',
-              name: 'David Bowie',
-              popularity: 82
-            }
-          ]
-        },
+      httpClientStub.callsFake(async (request: { url: string }) => ({
+        data: { id: request.url.split('/').pop(), name: 'Artist' },
         status: 200
-      })
+      }))
     })
 
     it('should call httpClient with correct config', async () => {
       await spotify.getArtists(ids)
-      expect(httpClientStub).to.have.been.calledWith({
-        ...baseHttpClientConfig,
-        params: {
-          ids: '0OdUWJ0sBjDrqHygGUXeCF,3dBVyJ7JuOMt4GE9607Qin,0oSGxfWSnnOXhD2fKuz2Gy'
-        },
-        url: 'https://api.spotify.com/v1/artists'
-      })
+      for (const id of ids) {
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          url: `https://api.spotify.com/v1/artists/${id}`
+        })
+      }
+      assert.equal(httpClientStub.callCount, ids.length)
     })
 
     it('should get artists if valid ids', async () => {

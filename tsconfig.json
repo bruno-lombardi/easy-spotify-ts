@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "target": "ES2022",
+    "types": ["node"],
     "lib": ["ES2022", "DOM"]
   },
   "include": ["src"],

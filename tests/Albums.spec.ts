@@ -69,27 +69,22 @@ describe('Albums', () => {
     ]
 
     beforeEach(() => {
-      // Fake response with reduced payload as you would get from Spotify Web API
-      // Check https://developer.spotify.com/documentation/web-api/reference/albums/get-several-albums/
-      httpClientStub.resolves({
-        data: {
-          albums: [
-            { id: '41MnTivkwTO3UUJ8DrqEJJ', name: 'Cyndi Lauper' },
-            { id: '6JWc4iAiJ9FjyK0B59ABb4', name: 'Rock is Good' },
-            { id: '6UXCm6bOO4gFlDQZV5yL37', name: 'Just a Fake Name' }
-          ]
-        },
+      httpClientStub.callsFake(async (request: { url: string }) => ({
+        data: { id: request.url.split('/').pop(), name: 'Album' },
         status: 200
-      })
+      }))
     })
 
     it('should call httpClient with correct config', async () => {
       await spotify.getAlbums(ids, { market: 'ES' })
-      expect(httpClientStub).to.have.been.calledWith({
-        ...baseHttpClientConfig,
-        params: { ids: `${ids}`, market: 'ES' },
-        url: 'https://api.spotify.com/v1/albums'
-      })
+      for (const id of ids) {
+        expect(httpClientStub).to.have.been.calledWith({
+          ...baseHttpClientConfig,
+          params: { market: 'ES' },
+          url: `https://api.spotify.com/v1/albums/${id}`
+        })
+      }
+      assert.equal(httpClientStub.callCount, ids.length)
     })
 
     it('should get albums if valid ids', async () => {

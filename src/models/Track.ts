@@ -17,7 +17,7 @@ export class Track {
 
   public artists: SimplifiedArtist[]
 
-  public available_markets: string[]
+  public available_markets?: string[]
 
   public disc_number: number
 
@@ -33,21 +33,23 @@ export class Track {
 
   public id: string
 
-  public is_playable: boolean
+  public is_playable?: boolean
 
-  public linked_from: TrackLink
+  public linked_from?: TrackLink
 
   public name: string
 
-  public restrictions: any
+  public restrictions?: { reason: string }
 
-  public popularity: number
+  public popularity?: number
 
-  public preview_url: string
+  public preview_url?: string | null
+
+  public is_local: boolean
 
   public track_number: number
 
-  public type: string
+  public type: 'track'
 
   public uri: string
 
@@ -68,6 +70,7 @@ export class Track {
     this.restrictions = response.restrictions
     this.popularity = response.popularity
     this.preview_url = response.preview_url
+    this.is_local = response.is_local
     this.track_number = response.track_number
     this.type = response.type
     this.uri = response.uri

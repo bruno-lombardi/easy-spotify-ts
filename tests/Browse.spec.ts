@@ -26,7 +26,9 @@ describe('Browse', () => {
   let httpClientStub: SinonStub
 
   beforeEach(() => {
-    spotify = new EasySpotify(new EasySpotifyConfig('token'))
+    spotify = new EasySpotify(
+      new EasySpotifyConfig('token', undefined, { quotaMode: 'extended' })
+    )
     httpClientStub = stub(spotify, 'httpClient')
   })
 

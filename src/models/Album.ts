@@ -14,8 +14,9 @@ export interface FeaturedAlbums {
 export interface SimplifiedAlbum {
   album_group?: string
   album_type: string
+  total_tracks: number
   artists: SimplifiedArtist[]
-  available_markets: string[]
+  available_markets?: string[]
   external_urls: ExternalUrls
   href: string
   id: string
@@ -23,7 +24,7 @@ export interface SimplifiedAlbum {
   name: string
   release_date: string
   release_date_precision: string
-  restrictions: any
+  restrictions?: { reason: string }
   type: string
   uri: string
 }
@@ -31,9 +32,13 @@ export interface SimplifiedAlbum {
 export class Album implements SimplifiedAlbum {
   public album_type: string
 
+  public total_tracks: number
+
+  public label?: string
+
   public artists: SimplifiedArtist[]
 
-  public available_markets: string[]
+  public available_markets?: string[]
 
   public copyrights: Copyright[]
 
@@ -41,7 +46,7 @@ export class Album implements SimplifiedAlbum {
 
   public external_urls: ExternalUrls
 
-  public genres: any[]
+  public genres?: string[]
 
   public href: string
 
@@ -55,9 +60,9 @@ export class Album implements SimplifiedAlbum {
 
   public release_date_precision: string
 
-  public restrictions: any
+  public restrictions?: { reason: string }
 
-  public popularity: number
+  public popularity?: number
 
   public tracks: PagingTracks
 
@@ -67,6 +72,8 @@ export class Album implements SimplifiedAlbum {
 
   constructor(response: any) {
     this.album_type = response.album_type
+    this.total_tracks = response.total_tracks
+    this.label = response.label
     this.artists = response.artists
     this.available_markets = response.available_markets
     this.copyrights = response.copyrights
@@ -88,5 +95,5 @@ export class Album implements SimplifiedAlbum {
 }
 
 export interface GetAlbumOptions {
-  market: string
+  market?: string
 }

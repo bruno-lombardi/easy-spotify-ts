@@ -15,6 +15,8 @@ import {
   PagingSearch,
   PagingTracks
 } from './Paging'
+export type { PagingFullTracks } from './Paging'
+export type { Episode } from './Episode'
 import { FeaturedPlaylists, SimplifiedPlaylist } from './Playlist'
 import { Recommendations, RecommendationsQuery } from './Recomendations'
 import { SimplifiedTrack } from './SimplifiedTrack'

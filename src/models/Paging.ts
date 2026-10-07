@@ -1,29 +1,32 @@
 import { SimplifiedAlbum } from './Album'
-import { SimplifiedArtist } from './Artist'
+import { Artist } from './Artist'
 import { Category } from './Category'
 import { SimplifiedPlaylist } from './Playlist'
 import { SimplifiedTrack } from './SimplifiedTrack'
+import { Track } from './Track'
 
-export interface Paging {
+export interface Paging<T = unknown> {
   href: string
-  items: any[]
+  items: T[]
   limit: number
-  next: string
+  next: string | null
   offset: number
-  previous: string
+  previous: string | null
   total: number
 }
 
-export interface PagingTracks extends Paging {
+export interface PagingTracks extends Paging<SimplifiedTrack> {
   items: SimplifiedTrack[]
 }
+
+export type PagingFullTracks = Paging<Track>
 
 export interface PagingAlbums extends Paging {
   items: SimplifiedAlbum[]
 }
 
 export interface PagingArtists extends Paging {
-  items: SimplifiedArtist[]
+  items: Artist[]
 }
 
 export interface PagingPlaylists extends Paging {
@@ -35,10 +38,10 @@ export interface PagingCategories extends Paging {
 }
 
 export interface PagingSearch {
-  tracks: PagingTracks
-  albums: PagingAlbums
-  artists: PagingArtists
-  playlists: PagingPlaylists
+  tracks?: PagingFullTracks
+  albums?: PagingAlbums
+  artists?: PagingArtists
+  playlists?: PagingPlaylists
 }
 
 export interface PagingRequestParams {

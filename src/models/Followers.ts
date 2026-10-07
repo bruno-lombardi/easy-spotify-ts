@@ -1,4 +1,4 @@
 export interface Followers {
-  href: string
+  href: string | null
   total: number
 }

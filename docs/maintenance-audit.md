@@ -1,7 +1,8 @@
 # Maintenance audit — 2026-10-07
 
-This update restores the development and packaging baseline. It does not migrate
-every Spotify endpoint or declare the library ready for a new npm release.
+This document records the initial development and packaging update. The subsequent
+endpoint and response migration is described in [Spotify API migration](spotify-api-migration.md).
+The package has not yet been versioned or published for these changes.
 
 ## Changes applied
 

@@ -29,13 +29,13 @@ export class Artist implements SimplifiedArtist {
 
   public uri: string
 
-  public followers: Followers
+  public followers?: Followers
 
   public genres: string[]
 
   public images: Image[]
 
-  public popularity: number
+  public popularity?: number
 
   constructor(response: any) {
     this.external_urls = response.external_urls

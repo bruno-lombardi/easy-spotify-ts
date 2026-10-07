@@ -19,7 +19,9 @@ describe('Playlists', () => {
   let httpClientStub: SinonStub
 
   beforeEach(() => {
-    spotify = new EasySpotify(new EasySpotifyConfig('token'))
+    spotify = new EasySpotify(
+      new EasySpotifyConfig('token', undefined, { quotaMode: 'extended' })
+    )
     httpClientStub = stub(spotify, 'httpClient')
   })
 
@@ -496,7 +498,7 @@ describe('Playlists', () => {
         ...baseHttpClientConfig,
         method: 'POST',
         data: { uris: ['uri1', 'url2'] },
-        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+        url: 'https://api.spotify.com/v1/playlists/playlistid/items'
       })
     })
     it('should call httpClient with position when passing position', async () => {
@@ -508,7 +510,7 @@ describe('Playlists', () => {
         ...baseHttpClientConfig,
         method: 'POST',
         data: { uris: ['uri1', 'url2'], position: 2 },
-        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+        url: 'https://api.spotify.com/v1/playlists/playlistid/items'
       })
     })
 
@@ -549,13 +551,12 @@ describe('Playlists', () => {
         ...baseHttpClientConfig,
         method: 'PUT',
         data: { uris: ['uri1', 'url2'] },
-        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+        url: 'https://api.spotify.com/v1/playlists/playlistid/items'
       })
     })
 
     it('should call httpClient with range params', async () => {
       await spotify.replacePlaylistTracks('playlistid', {
-        uris: ['uri1', 'url2'],
         insert_before: 2,
         range_length: 2,
         range_start: 0
@@ -564,12 +565,11 @@ describe('Playlists', () => {
         ...baseHttpClientConfig,
         method: 'PUT',
         data: {
-          uris: ['uri1', 'url2'],
           insert_before: 2,
           range_length: 2,
           range_start: 0
         },
-        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+        url: 'https://api.spotify.com/v1/playlists/playlistid/items'
       })
     })
 
@@ -608,8 +608,8 @@ describe('Playlists', () => {
       expect(httpClientStub).to.have.been.calledWith({
         ...baseHttpClientConfig,
         method: 'DELETE',
-        data: { tracks: [{ uri: 'uri1' }, { uri: 'url2' }] },
-        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+        data: { items: [{ uri: 'uri1' }, { uri: 'url2' }] },
+        url: 'https://api.spotify.com/v1/playlists/playlistid/items'
       })
     })
 
@@ -622,10 +622,10 @@ describe('Playlists', () => {
         ...baseHttpClientConfig,
         method: 'DELETE',
         data: {
-          tracks: [{ uri: 'uri1' }, { uri: 'url2' }],
+          items: [{ uri: 'uri1' }, { uri: 'url2' }],
           snapshot_id: 'snapshot_id'
         },
-        url: 'https://api.spotify.com/v1/playlists/playlistid/tracks'
+        url: 'https://api.spotify.com/v1/playlists/playlistid/items'
       })
     })
 
@@ -692,7 +692,8 @@ describe('Playlists', () => {
       expect(httpClientStub).to.have.been.calledWith({
         ...baseHttpClientConfig,
         method: 'DELETE',
-        url: 'https://api.spotify.com/v1/playlists/playlistid/followers'
+        url: 'https://api.spotify.com/v1/me/library',
+        params: { uris: 'spotify:playlist:playlistid' }
       })
     })
 

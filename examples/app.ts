@@ -1,27 +1,25 @@
-/**
- * The imports are relative to the project scope
- * If you to import this way in your own project, it will never work
- */
-import EasySpotify from '../src/EasySpotify'
-import EasySpotifyConfig from '../src/EasySpotifyConfig'
+import { EasySpotify, EasySpotifyConfig } from '../src'
 
-/**
- * You should instantiate this way
- * If you don't have a token at the moment of initialization, just pass an empty string
- */
-const spotify = new EasySpotify(new EasySpotifyConfig('token'))
-/**
- * Get a valid token through Spotify authorization
- * See how here: https://developer.spotify.com/documentation/general/guides/authorization-guide/
- */
-spotify.setToken('your-token-here')
+async function main(): Promise<void> {
+  const token = process.env.SPOTIFY_ACCESS_TOKEN
+  if (!token)
+    throw new Error(
+      'Set SPOTIFY_ACCESS_TOKEN to an authorized Spotify OAuth token'
+    )
 
-/**
- * Get albums example with then
- * Works with await too, it's just a regular Promise
- */
-// spotify.getAlbums(["382ObEPsp2rxGrnsizN5TX", "1A2GTWGtFfWp7KSQTwWOyo"], {market: "ES"}).then((albums) => {
-//   console.log(albums);
-// }).catch((error) => {
-//   console.log(error);
-// });
+  const spotify = new EasySpotify(new EasySpotifyConfig(token))
+  const query = process.env.SPOTIFY_SEARCH_QUERY ?? 'Miles Davis'
+  const tracks = await spotify.searchTracks(query, { limit: 10 })
+  console.log(
+    tracks.items.map(track => ({
+      name: track.name,
+      artists: track.artists.map(artist => artist.name),
+      uri: track.uri
+    }))
+  )
+}
+
+main().catch(error => {
+  console.error(error instanceof Error ? error.message : error)
+  process.exitCode = 1
+})

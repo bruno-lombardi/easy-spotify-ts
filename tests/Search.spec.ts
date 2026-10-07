@@ -10,7 +10,7 @@ import {
   PagingArtists,
   PagingPlaylists,
   PagingSearch,
-  PagingTracks
+  PagingFullTracks
 } from '../src/models'
 
 use(sinonChai)
@@ -220,7 +220,7 @@ describe('Albums', () => {
     })
 
     it('should get playlists for valid search', async () => {
-      const tracks: PagingTracks = await spotify.searchTracks('love', {
+      const tracks: PagingFullTracks = await spotify.searchTracks('love', {
         limit: 2
       })
       expect(tracks.items).to.not.be.empty
@@ -272,6 +272,7 @@ describe('Albums', () => {
       })
       expect(response.artists).to.exist
       expect(response.playlists).to.exist
+      assert.ok(response.playlists)
       expect(response.playlists.items).to.not.be.empty
       expect(response.playlists.items[0].id).to.eq('37i9dQZF1DX50QitC6Oqtn')
     })

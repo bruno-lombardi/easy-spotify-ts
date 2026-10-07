@@ -28,7 +28,9 @@ describe('Regression checks', () => {
   })
 
   it('serializes browse options without mutating the caller', async () => {
-    const spotify = new EasySpotify(new EasySpotifyConfig('token'))
+    const spotify = new EasySpotify(
+      new EasySpotifyConfig('token', undefined, { quotaMode: 'extended' })
+    )
     const requests: unknown[] = []
     spotify.httpClient.defaults.adapter = async config => {
       requests.push(config.params)
@@ -53,7 +55,9 @@ describe('Regression checks', () => {
     it(`retries a ${rejected ? 'rejected' : 'resolved'} 429 using seconds and preserves image headers`, async () => {
       const timer = useFakeTimers()
       try {
-        const spotify = new EasySpotify(new EasySpotifyConfig('token'))
+        const spotify = new EasySpotify(
+          new EasySpotifyConfig('token', undefined, { quotaMode: 'extended' })
+        )
         let calls = 0
         spotify.httpClient.defaults.adapter = async config => {
           calls += 1
@@ -90,7 +94,9 @@ describe('Regression checks', () => {
   }
 
   it('stops after two retries and returns a SpotifyError', async () => {
-    const spotify = new EasySpotify(new EasySpotifyConfig('token'))
+    const spotify = new EasySpotify(
+      new EasySpotifyConfig('token', undefined, { quotaMode: 'extended' })
+    )
     let calls = 0
     spotify.httpClient.defaults.adapter = async config => {
       calls += 1

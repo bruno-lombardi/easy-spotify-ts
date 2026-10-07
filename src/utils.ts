@@ -9,6 +9,7 @@ export const handleResponse = (response: AxiosResponse) => {
     message:
       response.data?.error?.message ??
       `Spotify request failed (${response.status})`,
-    status: response.status
+    status: response.status,
+    reason: response.data?.error?.reason
   })
 }

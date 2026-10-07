@@ -1,17 +1,26 @@
 import { Followers } from '.'
 import { ExternalUrls } from './ExternalUrls'
 import { Image } from './Image'
-import { PagingPlaylists } from './Paging'
+import { Paging, PagingPlaylists } from './Paging'
 import { User } from './User'
+import { Track } from './Track'
+import { Episode } from './Episode'
 
 export interface FeaturedPlaylists {
   message: string
   playlists: PagingPlaylists
 }
 
-interface Tracks {
+export interface PlaylistItemsSummary {
   href: string
   total: number
+}
+
+export type PlaylistOwner = Pick<
+  User,
+  'external_urls' | 'href' | 'id' | 'type' | 'uri'
+> & {
+  display_name?: string | null
 }
 
 export interface SimplifiedPlaylist {
@@ -21,11 +30,13 @@ export interface SimplifiedPlaylist {
   id: string
   images: Image[]
   name: string
-  description: string
-  owner: User
-  public: boolean
+  description: string | null
+  owner: PlaylistOwner
+  public: boolean | null
   snapshot_id: string
-  tracks: Tracks
+  items?: PlaylistItemsSummary
+  /** @deprecated Legacy response field from eligible extended quota apps. */
+  tracks?: PlaylistItemsSummary
   type: 'playlist'
   uri: string
 }
@@ -50,7 +61,7 @@ export interface ReplacePlaylistTracksParams {
   /**
    * An array of uris to set. An uri looks like this: spotify:track:4iV5W9uYEdYUVa79Axb7Rh.
    */
-  uris: string[]
+  uris?: string[]
   /**
    * The position of the first item to be reordered.
    */
@@ -81,6 +92,44 @@ export interface RemovePlaylistTracksParams {
   snapshot_id?: string
 }
 
-export interface Playlist extends SimplifiedPlaylist {
-  followers: Followers
+export interface PlaylistItem {
+  added_at: string | null
+  added_by: Pick<User, 'external_urls' | 'href' | 'id' | 'type' | 'uri'> | null
+  is_local: boolean
+  item: Track | Episode | null
+  /** @deprecated Legacy response field. Use item. */
+  track?: Track | Episode | null
+}
+
+export type PagingPlaylistItems = Paging<PlaylistItem | null>
+
+export interface Playlist extends Omit<SimplifiedPlaylist, 'items' | 'tracks'> {
+  followers?: Followers
+  /** Absent when the authorized user does not own or collaborate on the playlist. */
+  items?: PagingPlaylistItems
+  /** @deprecated Legacy response field. Use items. */
+  tracks?: PagingPlaylistItems
+}
+
+export type AddPlaylistItemsParams = AddPlaylistTracksParams
+export type UpdatePlaylistItemsParams =
+  | { uris: string[] }
+  | {
+      range_start: number
+      insert_before: number
+      range_length?: number
+      snapshot_id?: string
+    }
+export interface RemovePlaylistItemsParams {
+  items: { uri: string }[]
+  snapshot_id?: string
+}
+export interface GetPlaylistOptions {
+  market?: string
+  fields?: string
+  additional_types?: string
+}
+export interface GetPlaylistItemsOptions extends GetPlaylistOptions {
+  limit?: number
+  offset?: number
 }
