@@ -5,15 +5,10 @@
 A TypeScript client for the Spotify Web API, with typed responses, current-user
 playlist operations and explicit support for Spotify quota modes.
 
-The repository is being updated for the current API. These changes are not yet
-published to npm; version 0.3.0 has not been bumped. Node.js **>=22.13.0** is required;
+Node.js **>=22.13.0** is required;
 Node 24 is recommended. CommonJS and native ESM named imports are supported.
 
 ## Usage
-
-GitHub Actions validates changes and automates version bumps and npm publication
-through release PRs. See [release setup and recovery](docs/releases.md) to enable
-the npm Trusted Publisher and configure GitHub permissions.
 
 ```sh
 npm install easy-spotify-ts
