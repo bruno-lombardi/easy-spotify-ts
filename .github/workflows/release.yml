@@ -83,7 +83,7 @@ jobs:
           git merge-base --is-ancestor HEAD "origin/$DEFAULT_BRANCH"
           gh release view "$RELEASE_TAG" --json isDraft,isPrerelease,tagName > "$RUNNER_TEMP/release.json"
           node -e "const r = require(process.env.RUNNER_TEMP + '/release.json'); if (r.isDraft || r.isPrerelease || r.tagName !== process.env.RELEASE_TAG) throw new Error('Expected a published stable GitHub release')"
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
